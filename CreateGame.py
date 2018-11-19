@@ -120,6 +120,7 @@ class Game(PygameGame):
 
 # Helper function that draws boxes designated for plants
 
+#lol we just started this aha
     def getPlantSpace (self, screen) :
         for row in self.plantSpace:
             x1 = row[0][0]
