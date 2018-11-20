@@ -2,7 +2,7 @@
 # Name: Saisiddarth Domala
 # andrewID: sdomala
 # Section: O
-# Last modified 11/17/18
+# Last modified 11/20/18
 
 import pygame
 import random
@@ -48,8 +48,8 @@ class Monster(pygame.sprite.Sprite):
             if yCoordinate == self.end:
                 self.end = ((firstPoint + secondPoint) / 2)
                 continue
-            if counter < self.skip or not (counter % 2 == 0):
-                if counter == 2:
+            if counter < self.skip or not (counter % 2 == 0): #Skips every other
+                if counter == 2:                              #point
                     self.start = ((firstPoint + secondPoint) / 2)
                 continue
             self.yPoints.append ((firstPoint + secondPoint) / 2)
@@ -91,27 +91,5 @@ class Monster(pygame.sprite.Sprite):
         self.getRect()
         
 
-# 
-# pygame.init()
-# screen = pygame.display.set_mode((500, 500))
-# clock = pygame.time.Clock()
-# lightSalmon = (255,160,122)
-# zombie = pygame.image.load ('BrownMonster.png')
-# monsters = pygame.sprite.Group(Monster(300, 300))
-# 
-# playing = True
-# while playing:
-#     clock.tick(50)
-#     for event in pygame.event.get():
-#         if event.type == pygame.MOUSEBUTTONDOWN:
-#             d = Monster(*event.pos)
-#             monsters.add(d)
-#         elif event.type == pygame.QUIT:
-#             playing = False
-#     monsters.update(500, 500)
-#     screen.fill(lightSalmon)
-#     pygame.draw.lines(screen, (255, 0, 0), False, [(100,100), (150,200), (200,100)], 1)
-#     monsters.draw(screen)
-#     pygame.display.flip()
-# pygame.quit()
+
 
