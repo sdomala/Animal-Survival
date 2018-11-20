@@ -13,7 +13,7 @@ import math
 class Monster(pygame.sprite.Sprite):
 
 # Constructor method that initializes monster image, location, and speed
-    def __init__(self, x, y):
+    def __init__(self, x, y, rows, cols, margin, width, height, stepY):
         super(Monster, self).__init__()
         self.x, self.y = x, y
         self.xSpeed = 1
@@ -23,10 +23,38 @@ class Monster(pygame.sprite.Sprite):
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x - self.width//2, self.y - self.height//2,
                                 self.width, self.height)
-        self.end = 550
-        self.start = 46
-        self.yPoints = [190, 334, 478] #Maybe add backtracking for complexity
-        
+        self.first = margin #Top coordinate of grid
+        self.end = height - (height - self.first) % (stepY) #Bottom coordinate 
+        self.numRows = rows
+        self.numCols = cols
+        self.skip = 4 #Ignores 1st, second, and third row when calculating
+                      # places where enemies change direction
+        self.yPoints = []
+        self.getYPoints ()
+
+# Helper function that determines specific y-coordinates where the enemies
+# change direction
+
+    def getYPoints (self) :
+        firstPoint = self.first
+        secondPoint = self.first
+        step = int ((self.end - self.first) / self.numRows)
+        counter = 0
+        for yCoordinate in range (self.first, self.end + step, step ) :
+            temp = secondPoint
+            secondPoint = yCoordinate
+            firstPoint = temp
+            counter += 1
+            if yCoordinate == self.end:
+                self.end = ((firstPoint + secondPoint) / 2)
+                continue
+            if counter < self.skip or not (counter % 2 == 0):
+                if counter == 2:
+                    self.start = ((firstPoint + secondPoint) / 2)
+                continue
+            self.yPoints.append ((firstPoint + secondPoint) / 2)
+            
+      
 
 # Method that re-stores the x and y coordinates and the width and height of 
 # the image
