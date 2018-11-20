@@ -2,7 +2,7 @@
 # Name: Saisiddarth Domala
 # andrewID: sdomala
 # Section: O
-# Last modified 11/17/18
+# Last modified 11/20/18
 
 
 import pygame
@@ -39,7 +39,9 @@ class Game(PygameGame):
         self.boxes.remove ([])
         self.plantSpace.remove ([])
         self.monsters = pygame.sprite.Group(Monster(self.boxes[0][0][0] +  \
-                        self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2)) 
+                        self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.margin, self.width, 
+                        self.height, self.stepY)) 
         self.highlighted = (-1, -1)
         
         
@@ -71,6 +73,7 @@ class Game(PygameGame):
             self.boxes.append (temp) 
             temp = []
         
+        
 
 # MousePressed function allows you to highlight cells
 
@@ -90,8 +93,10 @@ class Game(PygameGame):
         self.counter += 1
         if self.counter % 94 == 0: #Every 2 seconds generates a monster
             y = random.randint (0, 7)
-            self.monsters.add (pygame.sprite.Group(Monster(self.boxes[0][0][0] \
-                    + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2)))
+            self.monsters.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.margin, self.width, 
+                        self.height, self.stepY))) 
         self.monsters.update(self.width, self.height)
 
 # View function that first generates grid and then the monsters
