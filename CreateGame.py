@@ -6,7 +6,7 @@
 
 
 import pygame
-from Monster import Monster
+from Enemy import Enemy
 from pygamegame import PygameGame
 import random
 import math
@@ -38,7 +38,7 @@ class Game(PygameGame):
         self.createDifferentGrids () #Helper function
         self.boxes.remove ([])
         self.plantSpace.remove ([])
-        self.monsters = pygame.sprite.Group(Monster(self.boxes[0][0][0] +  \
+        self.monsters = pygame.sprite.Group(Enemy(self.boxes[0][0][0] +  \
                         self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.margin, self.width, 
                         self.height, self.stepY)) 
@@ -93,7 +93,7 @@ class Game(PygameGame):
         self.counter += 1
         if self.counter % 94 == 0: #Every 2 seconds generates a monster
             y = random.randint (0, 7)
-            self.monsters.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
+            self.monsters.add (pygame.sprite.Group(Enemy(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.margin, self.width, 
                         self.height, self.stepY))) 
