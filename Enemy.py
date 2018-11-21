@@ -18,7 +18,7 @@ class Enemy(pygame.sprite.Sprite):
         self.x, self.y = x, y
         self.xSpeed = 1
         self.ySpeed = 0
-        self.image = pygame.image.load ('BrownMonster.png').convert_alpha()        
+        self.image = pygame.image.load ('GreenZombie2.png').convert_alpha()        
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x - self.width//2, self.y - self.height//2,
