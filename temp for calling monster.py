@@ -40,7 +40,7 @@ class Game(PygameGame):
         self.createDifferentGrids () #Helper function
         self.boxes.remove ([])
         self.plantSpace.remove ([])
-        self.monsters = pygame.sprite.Group(Enemy(self.boxes[0][0][0] +  \
+        self.monsters = pygame.sprite.Group(Zombie(self.boxes[0][0][0] +  \
                         self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.margin, self.width, 
                         self.height, self.stepY)) 
