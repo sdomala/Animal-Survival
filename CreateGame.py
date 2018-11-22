@@ -72,14 +72,14 @@ class Game(PygameGame):
         
         p1 = (xValue, yValue)
         p2 = (xValue, yValue)
-        p3 = (xValue, yValue)
-        p4 = (xValue, yValue)
+        # p3 = (xValue, yValue)
+        # p4 = (xValue, yValue)
         while (xValue + self.stepX) < (self.width - self.firstMargin) and \
          (yValue + self.stepY) < (self.height - self.endMargin + 1) :
             p1 = (xValue, yValue)
             p2 = (xValue + self.stepX, yValue + self.stepY)
             row = [p1] + [p2]
-            if not (row in self.plantBlocks) or (xValue <= self.firstMargin) or (yValue <= self.firstMargin) :
+            if not (row in self.plantBlocks) and (xValue >= self.firstMargin) and (yValue >= self.firstMargin) and self.checkValues (row):
                 self.plantBlocks.append (row)
             else :
                 (xValue, yValue ) = self.undoMove (xValue, yValue, xChange, yChange)
@@ -93,12 +93,34 @@ class Game(PygameGame):
                 (xValue, yValue, xChange, yChange) = self.changeValues (xValue, yValue)
             else :
                 (xValue, yValue, xChange, yChange) = self.safeChangeValues (xValue, yValue)
-            # (xValue, yValue) = self.safeChangeValues (xValue, yValue)
             self.totalBoxes += 1
         print (self.plantBlocks)
-            # xValue += self.stepX
-            # yValue += self.stepY
 
+# Helper function that checks if the new block's side is touching an already
+# stored block's side
+
+    def checkValues (self, row) :
+        firstXCoord = row[0][0]
+        firstYCoord = row[0][1]
+        
+        endXCoord = row[1][0]
+        endYCoord = row[1][1]
+        for block in range (len (self.plantBlocks)): #Checks if touching right side, then check if left side
+            print (self.plantBlocks [block])
+            if block == (len  (self.plantBlocks) - 1) or block == 0 :
+                continue
+            if endXCoord == self.plantBlocks[block][0][0] :
+                return False
+            elif firstXCoord == self.plantBlocks[block][1][0] :
+                return False
+            elif firstYCoord == self.plantBlocks[block][1][1] :
+                return False
+            elif endYCoord == self.plantBlocks [block][0][1]:
+                return False
+        return True
+                
+                
+            
 
 # Helper function for undoing moves when the previous block was already in 
 # self.plantBlocks
