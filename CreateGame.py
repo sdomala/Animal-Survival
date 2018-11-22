@@ -39,12 +39,15 @@ class Game(PygameGame):
         self.stepX = int ((self.width - (2*self.firstMargin))/ self.numCols)
         self.stepY = int ((self.height - (self.endMargin) - self.firstMargin)/self.numRows)
         self.boxes = [[]]
-        self.offSet = 4
+        
+        actualXChange = (self.width - 2 *self.firstMargin) / self.numCols
+        self.offSet = int (self.numCols * (actualXChange) - (self.stepX * self.numCols))
+        print (self.offSet)
+        
         firstBox = [(self.firstMargin, self.firstMargin)] + [( self.firstMargin + self.stepX, self.firstMargin + self.stepY)]
         self.plantBlocks.append (firstBox)
         self.createDifferentGrids () #Helper functions
         self.createDifferentTracks(self.firstMargin, self.firstMargin)
-        print ("your mom gay", self.plantBlocks)
         self.boxes.remove ([])
         self.plantBlocks.remove ([])
         self.monsters = pygame.sprite.Group(Zombie(self.boxes[0][0][0] +  \
@@ -70,9 +73,8 @@ class Game(PygameGame):
 # Helper function that creates different tracks for enemies
 
     def createDifferentTracks (self, xValue, yValue) :
-        print (self.stepX, 2039582353)
         if (xValue + self.stepX)  >= (self.width - self.firstMargin - self.offSet) :
-            print ("finished", self.plantBlocks)
+            print ("Good luck!")
             return self.plantBlocks
         for move in self.getPossibleMoves ():
             tempXValue = xValue + move[0]
@@ -84,7 +86,6 @@ class Game(PygameGame):
                 self.plantBlocks.append (row)
                 xValue += move[0]
                 yValue += move[1]
-                print ("chigga", self.plantBlocks)
                 tmpSolution = self.createDifferentTracks(xValue, yValue)
                 if tmpSolution != None:
                     return tmpSolution
@@ -114,20 +115,15 @@ class Game(PygameGame):
             return False
         
         for block in range (len (self.plantBlocks)): #Checks if touching right side, then check if left side
-            print (self.plantBlocks [block])
             if block == (len  (self.plantBlocks) - 1) or block == 0 :
                 continue
             if endXCoord == self.plantBlocks[block][0][0] and firstYCoord == self.plantBlocks[block][0][1] : #checks if new block is bordering from right
-                print (self.plantBlocks, row, "a")
                 return False
             elif firstXCoord == self.plantBlocks[block][1][0] and firstYCoord == self.plantBlocks[block][0][1]  : #checks if new block is bordering from left
-                print (self.plantBlocks, row, "b")
                 return False
             elif firstYCoord == self.plantBlocks[block][1][1] and firstXCoord == self.plantBlocks[block][0][0]: #checks if bordering from top
-                print (self.plantBlocks, row, "c")
                 return False
             elif endYCoord == self.plantBlocks [block][0][1] and firstXCoord == self.plantBlocks[block][0][0]: #checks if bordering from bottom
-                print (self.plantBlocks, row, "d")
                 return False
         return True
         
