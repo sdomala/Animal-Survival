@@ -39,9 +39,12 @@ class Game(PygameGame):
         self.stepX = int ((self.width - (2*self.firstMargin))/ self.numCols)
         self.stepY = int ((self.height - (self.endMargin) - self.firstMargin)/self.numRows)
         self.boxes = [[]]
-        self.totalBoxes = 0
+        self.offSet = 4
+        firstBox = (self.firstMargin, self.firstMargin, self.firstMargin + self.stepX, self.firstMargin + self.stepY)
+        self.plantBlocks.append (firstBox)
         self.createDifferentGrids () #Helper functions
-        self.createDifferentTracks()
+        self.createDifferentTracks(self.firstMargin, self.firstMargin)
+        print ("your mom gay", self.plantBlocks)
         self.boxes.remove ([])
         self.plantBlocks.remove ([])
         self.monsters = pygame.sprite.Group(Zombie(self.boxes[0][0][0] +  \
@@ -66,135 +69,86 @@ class Game(PygameGame):
     
 # Helper function that creates different tracks for enemies
 
-    def createDifferentTracks (self) :
-        xValue = self.firstMargin
-        yValue = self.firstMargin
-        
-        p1 = (xValue, yValue)
-        p2 = (xValue, yValue)
-        # p3 = (xValue, yValue)
-        # p4 = (xValue, yValue)
-        while (xValue + self.stepX) < (self.width - self.firstMargin) and \
-         (yValue + self.stepY) < (self.height - self.endMargin + 1) :
-            tempXValue = xValue
-            tempYValue = yValue
-            
-            if self.totalBoxes > 2 :
-                if yValue == self.height - self.endMargin or \
-                    yValue == self.firstMargin :
-                        xValue += self.stepX
-                        continue
-                (xValue, yValue, xChange, yChange) = self.changeValues (xValue, yValue)
-            else :
-                (xValue, yValue, xChange, yChange) = self.safeChangeValues (xValue, yValue)
-                
-            p1 = (xValue, yValue)
-            p2 = (xValue + self.stepX, yValue + self.stepY)
+    def createDifferentTracks (self, xValue, yValue) :
+        print (self.stepX, 2039582353)
+        if (xValue + self.stepX)  >= (self.width - self.firstMargin - self.offSet) :
+            print ("finished", self.plantBlocks)
+            return self.plantBlocks
+        for move in self.getPossibleMoves ():
+            tempXValue = xValue + move[0]
+            tempYValue = yValue + move[1]
+            p1 = (tempXValue, tempYValue)
+            p2 = (tempXValue + self.stepX, tempYValue + self.stepY)
             row = [p1] + [p2]
-            
-            if self.totalBoxes > 2 :
-                if yValue == self.height - self.endMargin or yValue == self.firstMargin: 
-                    xValue = tempXValue + self.stepX
-                    YValue = tempYvALUE
-            
-            while not (self.checkValues (row)) :
-                (xValue, yValue, xChange, yChange) = self.changeValues (tempXValue, tempYValue)
-            
-            if not (row in self.plantBlocks) and (xValue >= self.firstMargin) and (yValue >= self.firstMargin):
+            if self.checkValues(row) :
                 self.plantBlocks.append (row)
-            else :
-                (xValue, yValue ) = self.undoMove (xValue, yValue, xChange, yChange)
-            row = []
-            
-            
-            self.totalBoxes += 1
+                xValue += move[0]
+                yValue += move[1]
+                print ("chigga", self.plantBlocks)
+                tmpSolution = self.createDifferentTracks(xValue, yValue)
+                if tmpSolution != None:
+                    return tmpSolution
+                self.plantBlocks[::-1].remove (row)
+                xValue -= move[0]
+                yValue -= move[1]
+                
+        return None
+        
        
-
 # Helper function that checks if the new block's side is touching an already
 # stored block's side
 
     def checkValues (self, row) :
+        if row in self.plantBlocks: #Can't go backwards
+            return False
+            
         firstXCoord = row[0][0]
         firstYCoord = row[0][1]
         
         endXCoord = row[1][0]
         endYCoord = row[1][1]
+        
+        if firstXCoord < self.firstMargin: #Following if statements check if block goes off grid
+            return False
+        elif firstYCoord < self.firstMargin or endYCoord > (self.height - self.endMargin) :
+            return False
+        
         for block in range (len (self.plantBlocks)): #Checks if touching right side, then check if left side
             print (self.plantBlocks [block])
             if block == (len  (self.plantBlocks) - 1) or block == 0 :
                 continue
-            if endXCoord == self.plantBlocks[block][0][0] and firstYCoord == self.plantBlocks[block][0][1] :
+            if endXCoord == self.plantBlocks[block][0][0] and firstYCoord == self.plantBlocks[block][0][1] : #checks if new block is bordering from right
                 print (self.plantBlocks, row, "a")
                 return False
             elif firstXCoord == self.plantBlocks[block][1][0] and firstYCoord == self.plantBlocks[block][0][1]  : #checks if new block is bordering from left
                 print (self.plantBlocks, row, "b")
                 return False
-            elif firstYCoord == self.plantBlocks[block][1][1] and firstXCoord == self.plantBlocks[block][0][0]:
+            elif firstYCoord == self.plantBlocks[block][1][1] and firstXCoord == self.plantBlocks[block][0][0]: #checks if bordering from top
                 print (self.plantBlocks, row, "c")
                 return False
-            elif endYCoord == self.plantBlocks [block][0][1] and firstXCoord == self.plantBlocks[block][0][0]:
+            elif endYCoord == self.plantBlocks [block][0][1] and firstXCoord == self.plantBlocks[block][0][0]: #checks if bordering from bottom
                 print (self.plantBlocks, row, "d")
                 return False
         return True
-                
-                
-            
-
-# Helper function for undoing moves when the previous block was already in 
-# self.plantBlocks
-
-    def undoMove (self, xValue, yValue, xChange, yChange) :
-        return (xValue - xChange, yValue - yChange)
         
-
-
-# Helper function that generates new change in xValue and yValue of blocks
-# but doesn't allow for backwards movement
-
-    def safeChangeValues (self, xValue, yValue) :
-        done = False
-        stepX = self.stepX
-        stepY = self.stepY
-        while not done:
-            xChange = random.randint (0, 1)
-            yChange = random.randint (0, 1)
-            stepX *= xChange
-            stepY *= yChange
-            xValue += stepX
-            yValue += stepY
-            if xChange == 1 and yChange == 1:
-                xValue -= stepX
-                yValue -= stepY
-                continue
-            if xChange == 0 and yChange == 0:
-                stepX = self.stepX
-                stepY = self.stepY
-                continue
-            return (xValue, yValue, stepX, stepY)
     
 # Helper function that randomly generates new change in xValue and yValue of
 # blocks
 
-    def changeValues (self, xValue, yValue) :
-        done = False
-        stepX = self.stepX
-        stepY = self.stepY
-        while not done:
+    def getPossibleMoves (self) :
+        numBlocks = 0
+        moves = []
+        while numBlocks != 4:
             xChange = random.randint (-1, 1)
             yChange = random.randint (-1, 1)
-            stepX *= xChange
-            stepY *= yChange
-            xValue += stepX
-            yValue += stepY
-            if abs(xChange) == 1 and abs(yChange == 1):
-                xValue -= stepX
-                yValue -= stepY
-                continue
-            if xChange == 0 and yChange == 0:
-                stepX = self.stepX
-                stepY = self.stepY
-                continue
-            return (xValue, yValue, stepX, stepY)
+            specBlock = (xChange * self.stepX, yChange * self.stepY)
+            if not (specBlock in moves):
+                if not (abs(xChange) == abs(yChange)) :
+                    moves.append (specBlock)
+                    numBlocks += 1
+        return moves
+                
+        
         
 
 # MousePressed function allows you to highlight cells
