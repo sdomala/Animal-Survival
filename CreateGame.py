@@ -34,16 +34,15 @@ class Game(PygameGame):
         self.numRows = 8
         self.numCols = 8
         self.counter = 0
-        self.plantSpace = [[]] #REMOVE THIS AND ANYTHING RELATED
         self.plantBlocks = [[]]
         #self.stepX is the width of each grid block
         self.stepX = int ((self.width - (2*self.firstMargin))/ self.numCols)
         self.stepY = int ((self.height - (self.endMargin) - self.firstMargin)/self.numRows)
         self.boxes = [[]]
-        self.createDifferentGrids () #Helper function
+        self.totalBoxes = 0
+        self.createDifferentGrids () #Helper functions
         self.createDifferentTracks()
         self.boxes.remove ([])
-        self.plantSpace.remove ([])
         self.plantBlocks.remove ([])
         self.monsters = pygame.sprite.Group(Zombie(self.boxes[0][0][0] +  \
                         self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
@@ -53,31 +52,14 @@ class Game(PygameGame):
      
         
         
-# Helper function that creates different grids for zombies and plants
+# Helper function that creates overall grid
 
     def createDifferentGrids (self) :
-        plantTemp = []
         temp = []
-        skip = 1
-        first = True
         for row in range (self.firstMargin, self.height - self.endMargin + 1, self.stepY):
             for col in range (self.firstMargin, self.width - self.firstMargin, \
             self.stepX) :
                 temp += [(col, row)]
-                plantTemp += [(col, row)]
-            if skip == 0: #plantSpace list takes in 2 lines of coordinates
-                skip += 1
-            elif skip == 1 :
-                skip = 0
-                if first: # skips first column
-                    self.plantSpace.append ([plantTemp[1]] + \
-                    [plantTemp[-1]])
-                    first = False
-                elif not first:
-                    self.plantSpace.append ([plantTemp[0]] + \
-                    [plantTemp[-2]])
-                    first = True
-                plantTemp = []
             self.boxes.append (temp) 
             temp = []
             
@@ -92,18 +74,87 @@ class Game(PygameGame):
         p2 = (xValue, yValue)
         p3 = (xValue, yValue)
         p4 = (xValue, yValue)
-        while (xValue + self.stepX) < (self.width - self.firstMargin) and (yValue + self.stepY) < (self.height - self.endMargin + 1) :
+        while (xValue + self.stepX) < (self.width - self.firstMargin) and \
+         (yValue + self.stepY) < (self.height - self.endMargin + 1) :
             p1 = (xValue, yValue)
             p2 = (xValue + self.stepX, yValue + self.stepY)
-            p3 = (xValue, yValue + self.stepY)
-            p4 = (xValue + self.stepX, yValue + self.stepY)
             row = [p1] + [p2]
-            self.plantBlocks.append (row)
+            if not (row in self.plantBlocks) or (xValue <= self.firstMargin) or (yValue <= self.firstMargin) :
+                self.plantBlocks.append (row)
+            else :
+                (xValue, yValue ) = self.undoMove (xValue, yValue, xChange, yChange)
             row = []
             
-            xValue += self.stepX
-      
+            if self.totalBoxes > 2 :
+                if yValue == self.height - self.endMargin or \
+                    yValue == self.firstMargin :
+                        xValue += self.stepX
+                        continue
+                (xValue, yValue, xChange, yChange) = self.changeValues (xValue, yValue)
+            else :
+                (xValue, yValue, xChange, yChange) = self.safeChangeValues (xValue, yValue)
+            # (xValue, yValue) = self.safeChangeValues (xValue, yValue)
+            self.totalBoxes += 1
+        print (self.plantBlocks)
+            # xValue += self.stepX
+            # yValue += self.stepY
+
+
+# Helper function for undoing moves when the previous block was already in 
+# self.plantBlocks
+
+    def undoMove (self, xValue, yValue, xChange, yChange) :
+        return (xValue - xChange, yValue - yChange)
         
+
+
+# Helper function that generates new change in xValue and yValue of blocks
+# but doesn't allow for backwards movement
+
+    def safeChangeValues (self, xValue, yValue) :
+        done = False
+        stepX = self.stepX
+        stepY = self.stepY
+        while not done:
+            xChange = random.randint (0, 1)
+            yChange = random.randint (0, 1)
+            stepX *= xChange
+            stepY *= yChange
+            xValue += stepX
+            yValue += stepY
+            if xChange == 1 and yChange == 1:
+                xValue -= stepX
+                yValue -= stepY
+                continue
+            if xChange == 0 and yChange == 0:
+                stepX = self.stepX
+                stepY = self.stepY
+                continue
+            return (xValue, yValue, stepX, stepY)
+    
+# Helper function that randomly generates new change in xValue and yValue of
+# blocks
+
+    def changeValues (self, xValue, yValue) :
+        done = False
+        stepX = self.stepX
+        stepY = self.stepY
+        while not done:
+            xChange = random.randint (-1, 1)
+            yChange = random.randint (-1, 1)
+            stepX *= xChange
+            stepY *= yChange
+            xValue += stepX
+            yValue += stepY
+            if abs(xChange) == 1 and abs(yChange == 1):
+                xValue -= stepX
+                yValue -= stepY
+                continue
+            if xChange == 0 and yChange == 0:
+                stepX = self.stepX
+                stepY = self.stepY
+                continue
+            return (xValue, yValue, stepX, stepY)
         
 
 # MousePressed function allows you to highlight cells
@@ -135,7 +186,6 @@ class Game(PygameGame):
         screen.fill(self.lightYellow)
         points = []
         reversed = []
-        self.getPlantSpace (screen) #Calls helper function to get plantList ------MAYBE REMOVE THIS
         self.getPlantBlocks (screen)
         if not (self.highlighted == (-1,-1)) :
             pygame.draw.polygon (screen, (self.lightSalmon), self.highlighted,\
@@ -168,22 +218,6 @@ class Game(PygameGame):
         self.monsters.draw(screen)
 
 
-# Helper function that draws boxes designated for plants
-
-    def getPlantSpace (self, screen) :
-        for row in self.plantSpace:
-            x1 = row[0][0]
-            x2 = row[1][0]
-            y1 = row[0][1]
-            y2 = row[1][1]
-            p1 = [(x1, y1)]
-            p2 = [(x2, y2)]
-            p3 = [(x1, y2)]
-            p4 = [(x2, y1)]
-            plantPoints = p1 + p3 + p2 + p4 #4 tuple points that make up 
-            #rectangle where plants will be stored
-            pygame.draw.polygon (screen, (self.lightPurple), plantPoints, \
-            0)
             
 # Helper function that gets plant boxes
     def getPlantBlocks (self, screen) :
@@ -198,7 +232,6 @@ class Game(PygameGame):
             p4 = [(x2, y1)]
             plantPoints = p1 + p3 + p2 + p4 #4 tuple points that make up 
             #rectangle where plants will be stored
-            print (plantPoints)
             pygame.draw.polygon (screen, (self.lightSalmon), plantPoints, \
             0)
 
