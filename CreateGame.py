@@ -76,14 +76,8 @@ class Game(PygameGame):
         # p4 = (xValue, yValue)
         while (xValue + self.stepX) < (self.width - self.firstMargin) and \
          (yValue + self.stepY) < (self.height - self.endMargin + 1) :
-            p1 = (xValue, yValue)
-            p2 = (xValue + self.stepX, yValue + self.stepY)
-            row = [p1] + [p2]
-            if not (row in self.plantBlocks) and (xValue >= self.firstMargin) and (yValue >= self.firstMargin) and self.checkValues (row):
-                self.plantBlocks.append (row)
-            else :
-                (xValue, yValue ) = self.undoMove (xValue, yValue, xChange, yChange)
-            row = []
+            tempXValue = xValue
+            tempYValue = yValue
             
             if self.totalBoxes > 2 :
                 if yValue == self.height - self.endMargin or \
@@ -93,8 +87,28 @@ class Game(PygameGame):
                 (xValue, yValue, xChange, yChange) = self.changeValues (xValue, yValue)
             else :
                 (xValue, yValue, xChange, yChange) = self.safeChangeValues (xValue, yValue)
+                
+            p1 = (xValue, yValue)
+            p2 = (xValue + self.stepX, yValue + self.stepY)
+            row = [p1] + [p2]
+            
+            if self.totalBoxes > 2 :
+                if yValue == self.height - self.endMargin or yValue == self.firstMargin: 
+                    xValue = tempXValue + self.stepX
+                    YValue = tempYvALUE
+            
+            while not (self.checkValues (row)) :
+                (xValue, yValue, xChange, yChange) = self.changeValues (tempXValue, tempYValue)
+            
+            if not (row in self.plantBlocks) and (xValue >= self.firstMargin) and (yValue >= self.firstMargin):
+                self.plantBlocks.append (row)
+            else :
+                (xValue, yValue ) = self.undoMove (xValue, yValue, xChange, yChange)
+            row = []
+            
+            
             self.totalBoxes += 1
-        print (self.plantBlocks)
+       
 
 # Helper function that checks if the new block's side is touching an already
 # stored block's side
@@ -109,13 +123,17 @@ class Game(PygameGame):
             print (self.plantBlocks [block])
             if block == (len  (self.plantBlocks) - 1) or block == 0 :
                 continue
-            if endXCoord == self.plantBlocks[block][0][0] :
+            if endXCoord == self.plantBlocks[block][0][0] and firstYCoord == self.plantBlocks[block][0][1] :
+                print (self.plantBlocks, row, "a")
                 return False
-            elif firstXCoord == self.plantBlocks[block][1][0] :
+            elif firstXCoord == self.plantBlocks[block][1][0] and firstYCoord == self.plantBlocks[block][0][1]  : #checks if new block is bordering from left
+                print (self.plantBlocks, row, "b")
                 return False
-            elif firstYCoord == self.plantBlocks[block][1][1] :
+            elif firstYCoord == self.plantBlocks[block][1][1] and firstXCoord == self.plantBlocks[block][0][0]:
+                print (self.plantBlocks, row, "c")
                 return False
-            elif endYCoord == self.plantBlocks [block][0][1]:
+            elif endYCoord == self.plantBlocks [block][0][1] and firstXCoord == self.plantBlocks[block][0][0]:
+                print (self.plantBlocks, row, "d")
                 return False
         return True
                 
