@@ -13,6 +13,6 @@ class Zombie (Enemy) :
     def __init__(self, x, y, rows, cols, margin, width, height, stepY):
         super().__init__ (x, y, rows, cols, margin, width, height, stepY)
         print (3)
-        self.image = pygame.image.load ('GreenZombie.png').convert_alpha()        
+        self.image = pygame.image.load ('GreenZombie4.png').convert_alpha()        
         self.width = self.image.get_width()
         self.height = self.image.get_height()
