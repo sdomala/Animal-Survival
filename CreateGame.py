@@ -40,7 +40,7 @@ class Game(PygameGame):
         self.stepY = int ((self.height - (self.endMargin) - self.firstMargin)/self.numRows)
         self.boxes = [[]]
         self.offSet = 4
-        firstBox = (self.firstMargin, self.firstMargin, self.firstMargin + self.stepX, self.firstMargin + self.stepY)
+        firstBox = [(self.firstMargin, self.firstMargin)] + [( self.firstMargin + self.stepX, self.firstMargin + self.stepY)]
         self.plantBlocks.append (firstBox)
         self.createDifferentGrids () #Helper functions
         self.createDifferentTracks(self.firstMargin, self.firstMargin)
