@@ -41,9 +41,7 @@ class Game(PygameGame):
         self.boxes = [[]]
         
         actualXChange = (self.width - 2 *self.firstMargin) / self.numCols
-        self.offSet = int (self.numCols * (actualXChange) - (self.stepX * self.numCols))
-        print (self.offSet)
-        
+        self.offSet = int (self.numCols * (actualXChange) - (self.stepX * self.numCols))        
         firstBox = [(self.firstMargin, self.firstMargin)] + [( self.firstMargin + self.stepX, self.firstMargin + self.stepY)]
         self.plantBlocks.append (firstBox)
         self.createDifferentGrids () #Helper functions
@@ -89,10 +87,11 @@ class Game(PygameGame):
                 tmpSolution = self.createDifferentTracks(xValue, yValue)
                 if tmpSolution != None:
                     return tmpSolution
-                self.plantBlocks[::-1].remove (row)
+                self.plantBlocks = self.plantBlocks[::-1]
+                self.plantBlocks.remove (row)
+                self.plantBlocks = self.plantBlocks [::-1]
                 xValue -= move[0]
                 yValue -= move[1]
-                
         return None
         
        
