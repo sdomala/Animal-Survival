@@ -51,7 +51,7 @@ class Game(PygameGame):
         self.monsters = pygame.sprite.Group(Zombie(self.boxes[0][0][0] +  \
                         self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY)) 
+                        self.height, self.stepY, self.plantBlocks)) 
         self.highlighted = (-1, -1)
      
         
@@ -167,7 +167,7 @@ class Game(PygameGame):
             self.monsters.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY))) 
+                        self.height, self.stepY, self.plantBlocks))) 
         self.monsters.update(self.width, self.height)
 
 # View function that first generates grid and then the monsters
