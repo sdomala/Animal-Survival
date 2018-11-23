@@ -45,9 +45,13 @@ class Enemy(pygame.sprite.Sprite):
 # Method that updates the x and y values of the object
 
     def update(self, screenWidth, screenHeight):
-        print (self.plantBlocks, self.index)
-        if self.index == (len (self.plantBlocks) -1) :
-            pass
+        
+        if self.index == (len (self.plantBlocks) -1) : #Checks if at last block
+            self.x += self.xSpeed
+            self.y += self.ySpeed
+            self.getRect()
+            return
+        
         self.x += self.xSpeed
         self.y += self.ySpeed
         
@@ -64,6 +68,9 @@ class Enemy(pygame.sprite.Sprite):
         if not (self.atBlock (firstBlock)):
             self.index += 1
             firstBlock = self.plantBlocks[self.index]
+            if self.index == (len (self.plantBlocks) -1) :
+                return
+            
             secondBlock = self.plantBlocks[self.index + 1]
             firstXCoord = firstBlock[0][0]
             secondXCoord = firstBlock[1][0] #not second block, but second coordinate within same block
@@ -72,7 +79,7 @@ class Enemy(pygame.sprite.Sprite):
             xMidPoint = (firstXCoord + secondXCoord) / 2
             yMidPoint = (firstYCoord + secondYCoord) / 2
         
-        if abs (self.x - xMidPoint) < 1 and abs (self.y - yMidPoint) < 1: #We're at the middle of a point
+        if abs (self.x - xMidPoint) < 3 and abs (self.y - yMidPoint) < 3: #We're at the middle of a point
             if secondBlock [1][1] > firstBlock [1][1] :
                 self.xSpeed = 0
                 self.ySpeed = 1
