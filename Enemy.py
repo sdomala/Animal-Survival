@@ -13,7 +13,7 @@ import math
 class Enemy(pygame.sprite.Sprite):
 
 # Constructor method that initializes monster image, location, and speed
-    def __init__(self, x, y, rows, cols, margin, width, height, stepY):
+    def __init__(self, x, y, rows, cols, margin, width, height, stepY, plantBlocks):
         super(Enemy, self).__init__()
         self.x, self.y = x, y
         self.xSpeed = 1
@@ -29,31 +29,9 @@ class Enemy(pygame.sprite.Sprite):
         self.numCols = cols
         self.skip = 4 #Ignores 1st, second, and third row when calculating
                       # places where enemies change direction
-        self.yPoints = []
-        self.getYPoints ()
-
-# Helper function that determines specific y-coordinates where the enemies
-# change direction
-
-    def getYPoints (self) :
-        firstPoint = self.first
-        secondPoint = self.first
-        step = int ((self.end - self.first) / self.numRows)
-        counter = 0
-        for yCoordinate in range (self.first, self.end + step, step ) :
-            temp = secondPoint
-            secondPoint = yCoordinate
-            firstPoint = temp
-            counter += 1
-            if yCoordinate == self.end:
-                self.end = ((firstPoint + secondPoint) / 2)
-                continue
-            if counter < self.skip or not (counter % 2 == 0): #Skips every other
-                if counter == 2:                              #point
-                    self.start = ((firstPoint + secondPoint) / 2)
-                continue
-            self.yPoints.append ((firstPoint + secondPoint) / 2)
-            
+        self.index = 0
+        self.plantBlocks = plantBlocks
+        
       
 
 # Method that re-stores the x and y coordinates and the width and height of 
@@ -67,29 +45,54 @@ class Enemy(pygame.sprite.Sprite):
 # Method that updates the x and y values of the object
 
     def update(self, screenWidth, screenHeight):
+        print (self.index, self.plantBlocks)
         self.x += self.xSpeed
         self.y += self.ySpeed
-        if self.y == self.yPoints[0] or self.y == self.yPoints[2] :
-            self.xSpeed = -1
-            self.ySpeed = 0
-            if self.x == self.start:
-                self.xSpeed = 0
-                self.ySpeed = 1
-            self.getRect()
-            return #Ensures last if statement doesn't get called
-        elif self.y == self.yPoints[1]:
-            self.xSpeed = 1
-            self.ySpeed = 0
-            if self.x == self.end :
-                self.ySpeed = 1
-                self.xSpeed = 0
-            self.getRect()
-            return 
-        if self.x == self.end: #First conditional statement to pass
-            self.ySpeed = 1
-            self.xSpeed = 0
-        self.getRect()
         
+        firstBlock = self.plantBlocks[self.index]
+        secondBlock = self.plantBlocks[self.index + 1]
+        
+        firstXCoord = firstBlock[0][0]
+        secondXCoord = firstBlock[1][0]
+        midPoint = (firstXCoord + secondXCoord) / 2
+        if not (self.atBlock (firstBlock)):
+            self.index += 1
+            firstBlock = self.plantBlocks[self.index]
+            secondBlock = self.plantBlocks[self.index + 1]
+            firstXCoord = firstBlock[0][0]
+            secondXCoord = firstBlock[1][0]
+            midPoint = (firstXCoord + secondXCoord) / 2
+        
+        if abs (self.x - midPoint) < 1 : #We're at the middle of a point
+            if secondBlock [1][1] > firstBlock [1][1] :
+                self.xSpeed = 0
+                self.ySpeed = 1
+            elif secondBlock [1][1] < firstBlock [1][1] :
+                self.xSpeed = 0
+                self.ySpeed = -1
+            elif secondBlock [1][0] > firstBlock [1][0] :
+                self.xSpeed = 1
+                self.ySpeed = 0
+            else:
+                self.xSpeed = -1
+                self.ySpeed = 0
+        self.getRect()
+    
+
+
+# Helper function that checks if image coordinates are within specified block
+
+    def atBlock (self, firstBlock) :
+        firstXCoord = firstBlock [0][0]
+        secondXCoord = firstBlock [1][0]
+        
+        firstYCoord = firstBlock [0][1]
+        secondYCoord = firstBlock [1][1]
+        if firstXCoord < self.x < secondXCoord:
+            if firstYCoord < self.y < secondYCoord :
+                return True
+        return False
+
 
 
 # first = Enemy (20, 20, 20, 20, 20, 20, 20, 20)
