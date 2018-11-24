@@ -8,6 +8,7 @@ import pygame
 import random
 import math
 
+
 # Animal class with properties and methods for domesticated and wild animals
 
 class Animal(pygame.sprite.Sprite):
@@ -21,9 +22,7 @@ class Animal(pygame.sprite.Sprite):
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x - self.width//2, self.y - self.height//2,
                                 self.width, self.height)
-
-        
-        
+       
     
 
 # Method that re-stores the x and y coordinates and the width and height of 
