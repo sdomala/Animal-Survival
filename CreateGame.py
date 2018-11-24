@@ -174,7 +174,7 @@ class Game(PygameGame):
 
     def timerFired(self, dt):
         self.counter += 1
-        if self.counter % 94 == 0: #Every 2 seconds generates a monster
+        if self.counter % 141 == 0: #Every 3 seconds generates a monster
             y = random.randint (0, 7)
             self.monsters.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
@@ -183,13 +183,13 @@ class Game(PygameGame):
         self.monsters.update(self.width, self.height)
         
         
-        if self.hasAnimal and self.counter % 94 == 0:
+        if self.hasAnimal and self.counter % 47 == 0:
             for animal in self.animals:
                 if self.hasWeapon == False :
-                    self.weapons = pygame.sprite.Group(Weapon(animal.x, animal.y, 1, 0))
+                    self.weapons = pygame.sprite.Group(Weapon(animal.x, animal.y, 3, 0))
                     self.hasWeapon = True
                 else: 
-                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 1, 0)))
+                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 3, 0)))
         if self.hasWeapon:
             self.weapons.update ()
             
