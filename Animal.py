@@ -24,7 +24,7 @@ class Animal(pygame.sprite.Sprite):
 
         
         
-      
+    
 
 # Method that re-stores the x and y coordinates and the width and height of 
 # the image
