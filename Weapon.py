@@ -17,11 +17,13 @@ class Weapon(pygame.sprite.Sprite):
         super(Weapon, self).__init__()
         self.x, self.y = x, y
         self.xSpeed, self.ySpeed = xSpeed, ySpeed
-        self.image = pygame.image.load ('Dog2.png').convert_alpha()        
+        self.image = pygame.image.load ('Bone.png').convert_alpha()        
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x - self.width//2, self.y - self.height//2,
                                 self.width, self.height)
+                                
+        
 
         
 # Update function that changes position of weapon
