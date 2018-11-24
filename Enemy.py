@@ -2,13 +2,13 @@
 # Name: Saisiddarth Domala
 # andrewID: sdomala
 # Section: O
-# Last modified 11/20/18
+# Last modified 11/23/18
 
 import pygame
 import random
 import math
 
-# Enemy class with properties and methods related to monster objects
+# Enemy class with properties and methods for monsters, zombies, and ghosts
 
 class Enemy(pygame.sprite.Sprite):
 
