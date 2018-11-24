@@ -10,6 +10,7 @@ from Enemy import Enemy
 from Monster import Monster
 from Zombie import Zombie
 from Animal import Animal
+from Weapon import Weapon
 from pygamegame import PygameGame
 import random
 import math
@@ -56,6 +57,8 @@ class Game(PygameGame):
         self.highlighted = (-1, -1)
         self.firstAnimal = True
         self.hasAnimal = False
+        self.weapons = []
+        self.hasWeapon = False
      
         
         
@@ -178,6 +181,18 @@ class Game(PygameGame):
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))) 
         self.monsters.update(self.width, self.height)
+        
+        
+        if self.hasAnimal and self.counter % 94 == 0:
+            for animal in self.animals:
+                if self.hasWeapon == False :
+                    self.weapons = pygame.sprite.Group(Weapon(animal.x, animal.y, 1, 0))
+                    self.hasWeapon = True
+                else: 
+                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 1, 0)))
+        if self.hasWeapon:
+            self.weapons.update ()
+            
 
 # View function that first generates grid and then the monsters
     def redrawAll(self, screen):
@@ -187,6 +202,10 @@ class Game(PygameGame):
         self.getPlantBlocks (screen)
         if self.hasAnimal:
             self.animals.draw (screen)
+        
+        if self.hasWeapon:
+            self.weapons.draw (screen)
+        
         for col in range (self.firstMargin, self.width - self.firstMargin, \
             self.stepX) :
             for row in range (self.firstMargin, self.height - self.endMargin + 1, \
