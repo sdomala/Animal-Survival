@@ -9,6 +9,7 @@ import pygame
 from Enemy import Enemy
 from Monster import Monster
 from Zombie import Zombie
+from Animal import Animal
 from pygamegame import PygameGame
 import random
 import math
@@ -53,6 +54,8 @@ class Game(PygameGame):
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks)) 
         self.highlighted = (-1, -1)
+        self.firstAnimal = True
+        self.hasAnimal = False
      
         
         
@@ -149,14 +152,20 @@ class Game(PygameGame):
 # MousePressed function allows you to highlight cells
 
     def mousePressed (self, x, y) :
-        col = (x - self.margin) // self.stepX
-        row = (y - self.margin) // self.stepY
+        col = (x - self.firstMargin) // self.stepX
+        row = (y - self.firstMargin) // self.stepY
         first = self.boxes[row][col]
         second = self.boxes[row + 1][col + 1]
         third = self.boxes [row][col + 1]
         fourth = self.boxes[row + 1][col]
         #Creates list of tuples of each box corner
-        self.highlighted = [first] + [third] + [second] + [fourth]
+        self.hasAnimal = True
+        if self.firstAnimal:
+            self.animals = pygame.sprite.Group(Animal(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
+            print (234)
+            self.firstAnimal = False
+        else :
+            self.animals.add (pygame.sprite.Group(Animal(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
 
 # Called approximately every 20 milliseconds and updates position of monsters
 
@@ -172,13 +181,12 @@ class Game(PygameGame):
 
 # View function that first generates grid and then the monsters
     def redrawAll(self, screen):
-        screen.fill(self.lightYellow)
+        screen.fill(self.lightBlue)
         points = []
         reversed = []
         self.getPlantBlocks (screen)
-        if not (self.highlighted == (-1,-1)) :
-            pygame.draw.polygon (screen, (self.lightSalmon), self.highlighted,\
-            0) #highlighted cell based on mouse click
+        if self.hasAnimal:
+            self.animals.draw (screen)
         for col in range (self.firstMargin, self.width - self.firstMargin, \
             self.stepX) :
             for row in range (self.firstMargin, self.height - self.endMargin + 1, \
