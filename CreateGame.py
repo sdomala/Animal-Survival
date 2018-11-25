@@ -50,7 +50,7 @@ class Game(PygameGame):
         self.createDifferentTracks(self.firstMargin, self.firstMargin)
         self.boxes.remove ([])
         self.plantBlocks.remove ([])
-        self.monsters = pygame.sprite.Group(Zombie(self.boxes[0][0][0] +  \
+        self.enemies = pygame.sprite.Group(Zombie(self.boxes[0][0][0] +  \
                         self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks)) 
@@ -170,29 +170,46 @@ class Game(PygameGame):
         else :
             self.animals.add (pygame.sprite.Group(Animal(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
 
-# Called approximately every 20 milliseconds and updates position of monsters
+# Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
         self.counter += 1
-        if self.counter % 141 == 0: #Every 3 seconds generates a monster
+        if self.counter % 141 == 0: #Every 3 seconds generates a enemies
             y = random.randint (0, 7)
-            self.monsters.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
+            self.enemies.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))) 
-        self.monsters.update(self.width, self.height)
+        self.enemies.update(self.width, self.height)
         
         
         if self.hasAnimal and self.counter % 47 == 0:
             for animal in self.animals:
                 if self.hasWeapon == False :
                     self.weapons = pygame.sprite.Group(Weapon(animal.x, animal.y, 3, 0))
+                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, -3, 0)))
+                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 0, 3)))
+                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 0, -3)))
                     self.hasWeapon = True
                 else: 
                     self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 3, 0)))
+                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, -3, 0)))
+                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 0, 3)))
+                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 0, -3)))
         if self.hasWeapon:
             self.weapons.update ()
             
+        self.updateCollisions() 
+        
+    
+# Helper function that checks for collisions and updates the health/existence
+# of the enemies
+
+    def updateCollisions (self) :
+        for weapon in self.weapons:
+            for enemy in self.enemies:
+                if pygame.sprite.collide_mask (weapon, enemy) :
+                   self.enemies.remove (enemy)
 
 # View function that first generates grid and then the monsters
     def redrawAll(self, screen):
@@ -231,7 +248,7 @@ class Game(PygameGame):
                 reversed.append (revPoint)
             pygame.draw.lines (screen, self.black, False, reversed, 3)
             reversed = []
-        self.monsters.draw(screen)
+        self.enemies.draw(screen)
 
 
             
