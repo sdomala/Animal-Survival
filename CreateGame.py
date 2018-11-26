@@ -67,7 +67,8 @@ class Game(PygameGame):
         self.weapons = []
         self.hasWeapon = False
         self.money = 10
-        
+        self.chooseAnimal = True
+        self.type = "dog"
      
         
         
@@ -164,19 +165,70 @@ class Game(PygameGame):
 # MousePressed function allows you to highlight cells
 
     def mousePressed (self, x, y) :
-        col = (x - self.firstMargin) // self.stepX
-        row = (y - self.firstMargin) // self.stepY
-        first = self.boxes[row][col]
-        second = self.boxes[row + 1][col + 1]
-        third = self.boxes [row][col + 1]
-        fourth = self.boxes[row + 1][col]
-        #Creates list of tuples of each box corner
-        self.hasAnimal = True
-        if self.firstAnimal:
-            self.animals = pygame.sprite.Group(Animal(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
-            self.firstAnimal = False
+        if self.chooseAnimal:
+            if x >= ((6 * self.firstMargin) - 29) and x<= (6 * self.firstMargin + 29) and y <= ((self.height - 0.75 * self.endMargin) + 29) and y >= ((self.height - 0.75 * self.endMargin) - 29) :
+                self.type = "dog"
+            elif x >= ((24 * self.firstMargin) - (53/2)) and x <= ((24 * self.firstMargin) + (53/2)) and y >= ((self.height - 0.75 * self.endMargin) - (53/2)) and y <= ((self.height - 0.75 * self.endMargin) + (53/2)):
+                self.type = "goat"
+            elif x >= ((42 * self.firstMargin) - (73/2)) and x <= ((42 * self.firstMargin) + (73/2)) and y >= ((self.height - 0.75 * self.endMargin) - (51/2)) and y <= ((self.height - 0.75 * self.endMargin) + (51/2)) :
+                print ("got cow")
+                self.type = "cow"
+            else :
+                self.type = "alligator"
+            self.chooseAnimal = False
+    
         else :
-            self.animals.add (pygame.sprite.Group(Animal(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
+            col = (x - self.firstMargin) // self.stepX
+            row = (y - self.firstMargin) // self.stepY
+            first = self.boxes[row][col]
+            second = self.boxes[row + 1][col + 1]
+            third = self.boxes [row][col + 1]
+            fourth = self.boxes[row + 1][col]
+            #Creates list of tuples of each box corner
+            self.hasAnimal = True
+            if self.type == "dog" :
+                if self.firstAnimal:
+                    self.animals = pygame.sprite.Group(Dog(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
+                    self.firstAnimal = False
+                else :
+                    self.animals.add (pygame.sprite.Group(Dog(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
+            elif self.type == "goat" :
+                if self.firstAnimal:
+                    self.animals = pygame.sprite.Group(Goat(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
+                    
+                    self.firstAnimal = False
+                else :
+                    self.animals.add (pygame.sprite.Group(Goat(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
+            elif self.type == "cow" :
+                if self.firstAnimal :
+                    self.animals = pygame.sprite.Group(Cow(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
+                    self.firstAnimal = False
+                else :
+                    self.animals.add (pygame.sprite.Group(Cow(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
+            elif self.type == "alligator":
+                if self.firstAnimal:
+                    self.animals = pygame.sprite.Group(Alligator(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
+                    for animal in self.animals:
+                        print (animal.width, animal.height)
+                    self.firstAnimal = False
+                else :
+                    self.animals.add (pygame.sprite.Group(Alligator(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
+            elif self.type == "gorilla":
+                if self.firstAnimal:
+                    self.animals = pygame.sprite.Group(Dog(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
+                    self.firstAnimal = False
+                else :
+                    self.animals.add (pygame.sprite.Group(Dog(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
+            elif self.type == "lion":
+                if self.firstAnimal:
+                    self.animals = pygame.sprite.Group(Lion(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
+                    self.firstAnimal = False
+                else :
+                    self.animals.add (pygame.sprite.Group(Lion(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
+            self.chooseAnimal = True
+  
+
+            
 
 # Called approximately every 20 milliseconds and updates position of enemies
 
@@ -219,7 +271,6 @@ class Game(PygameGame):
                 if pygame.sprite.collide_mask (weapon, enemy) :
                     enemy.health -= weapon.damage
                     self.weapons.remove (weapon)
-                    print (enemy.health, weapon.damage)
                     if enemy.health <= 0:
                         self.enemies.remove (enemy)
 
@@ -292,6 +343,9 @@ class Game(PygameGame):
         
         self.displayAnimals.draw (screen)
 
+        
+        
+            
             
 # Helper function that gets plant boxes
     def getPlantBlocks (self, screen) :
