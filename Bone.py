@@ -1,4 +1,4 @@
-# Weapon class for Term Project
+# Bone class for Term Project
 # Name: Saisiddarth Domala
 # andrewID: sdomala
 # Section: O
@@ -8,13 +8,13 @@
 import pygame
 import random
 import math
-import Weapon from Weapon
+from Weapon import Weapon
 
-# Animal class with properties and methods for domesticated and wild animals
+# Bone subclass with methods and properties
 
 class Bone(Weapon):
 
-# Constructor method that initializes monster image, location, and speed
+# Constructor method that initializes bone damage, position, and speed
     def __init__(self, x, y, xSpeed, ySpeed):
         super().__init__ (x, y, xSpeed, ySpeed)
         self.damage = 4
