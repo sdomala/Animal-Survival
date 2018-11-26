@@ -5,7 +5,7 @@
 # Last modified 11/25/18
 
 # Citation: Received image from 
-# https://pt.wikipedia.org/wiki/Ficheiro:Cow_cartoon_04.svg
+# https://pt.kisspng.com/kisspng-wo9199/preview.html
 
 import pygame
 import random
