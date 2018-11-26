@@ -11,6 +11,11 @@ from Monster import Monster
 from Zombie import Zombie
 from Animal import Animal
 from Weapon import Weapon
+from Bone import Bone
+from Horn import Horn
+from Milk import Milk
+from Water import Water
+from Banana import Banana
 from Coin import Coin
 from Dog import Dog
 from Goat import Goat
@@ -39,6 +44,7 @@ class Game(PygameGame):
         self.peach = (255, 229, 153)
         self.lightPink = (255, 204, 204)
         self.lightYellow = (250, 250, 210)
+        self.turquoise = (64, 224, 208)
         self.firstMargin = 10
         self.endMargin = 150
         self.numRows = 8
@@ -78,10 +84,6 @@ class Game(PygameGame):
                     if col == plantRow[0]:
                         self.tempSlots[row].remove (col)
         self.availableSlots = self.tempSlots
-        
-        print ("available slots", self.availableSlots)
-        print ("all slots", self.boxes)
-        print ("Plant blocks", self.plantBlocks)
         
         
 # Helper function that creates overall grid
@@ -208,19 +210,29 @@ class Game(PygameGame):
 
     def placeAnimal (self, x, y) :
         valid = False
+        endY = self.boxes[-1][-1][-1]
+        if y >= endY :
+            self.chooseAnimal = True
+            return
+            
         col = (x - self.firstMargin) // self.stepX
         row = (y - self.firstMargin) // self.stepY
         first = self.boxes[row][col]
-        for row in self.availableSlots :
-            for item in row:
-                if first == item :
+        
+        self.tempSlots = copy.deepcopy (self.availableSlots) 
+        for row in range (len (self.availableSlots)) :
+            for item in self.availableSlots[row]:
+                if first == item:
                     valid = True
+                    self.tempSlots[row].remove (item)
+        
+        
         if valid == False:
-            print ("We're here'")
             self.chooseAnimal = True
             return 
                     
-               
+        self.availableSlots = self.tempSlots
+        
         
         #Creates list of tuples of each box corner
         self.hasAnimal = True
@@ -281,21 +293,85 @@ class Game(PygameGame):
         if self.hasAnimal and self.counter % 47 == 0:
             for animal in self.animals:
                 if self.hasWeapon == False :
-                    self.weapons = pygame.sprite.Group(Weapon(animal.x, animal.y, 3, 0))
-                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, -3, 0)))
-                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 0, 3)))
-                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 0, -3)))
+                    self.createInitialWeapons(animal)
                     self.hasWeapon = True
                 else: 
-                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 3, 0)))
-                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, -3, 0)))
-                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 0, 3)))
-                    self.weapons.add (pygame.sprite.Group(Weapon(animal.x, animal.y, 0, -3)))
+                    self.createLaterWeapons (animal)
         if self.hasWeapon:
             self.weapons.update ()
             
         self.updateCollisions() 
-        
+
+# Helper function for creating later weapons
+
+    def createLaterWeapons (self, animal) :
+        if isinstance (animal, Dog) :
+            self.weapons.add(pygame.sprite.Group(Bone(animal.x, animal.y, 3, 0)))
+            self.weapons.add (pygame.sprite.Group(Bone(animal.x, animal.y, -3, 0)))
+            self.weapons.add (pygame.sprite.Group(Bone(animal.x, animal.y, 0, 3)))
+            self.weapons.add (pygame.sprite.Group(Bone(animal.x, animal.y, 0, -3)))
+        elif isinstance (animal, Goat) :
+            self.weapons.add (pygame.sprite.Group(Horn(animal.x, animal.y, 3, 0)))
+            self.weapons.add (pygame.sprite.Group(Horn(animal.x, animal.y, -3, 0)))
+            self.weapons.add (pygame.sprite.Group(Horn(animal.x, animal.y, 0, 3)))
+            self.weapons.add (pygame.sprite.Group(Horn(animal.x, animal.y, 0, -3))) 
+        elif isinstance (animal, Cow) :
+            self.weapons.add (pygame.sprite.Group(Milk(animal.x, animal.y, 2.5, 0)))
+            self.weapons.add (pygame.sprite.Group(Milk(animal.x, animal.y, -2.5, 0)))
+            self.weapons.add (pygame.sprite.Group(Milk(animal.x, animal.y, 0, 2.5)))
+            self.weapons.add (pygame.sprite.Group(Milk(animal.x, animal.y, 0, -2.5))) 
+        elif isinstance (animal, Alligator) :
+            self.weapons.add (pygame.sprite.Group(Water(animal.x, animal.y, 3, 3)))
+            self.weapons.add (pygame.sprite.Group(Water(animal.x, animal.y, -3, -3)))
+            self.weapons.add (pygame.sprite.Group(Water(animal.x, animal.y, 3, -3)))
+            self.weapons.add (pygame.sprite.Group(Water(animal.x, animal.y, -3, 3))) 
+        elif isinstance (animal, Gorilla) :
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 3, 3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, -3, -3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, -3, 3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 3, -3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 0, -3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 0, 3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 3, 0))) 
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, -3, 0)))
+        else :
+            self.moveLion (animal)
+    
+# Helper function for creating initial weapons
+
+    def createInitialWeapons (self, animal) :
+        if isinstance (animal, Dog) :
+            self.weapons = pygame.sprite.Group(Bone(animal.x, animal.y, 3, 0))
+            self.weapons.add (pygame.sprite.Group(Bone(animal.x, animal.y, -3, 0)))
+            self.weapons.add (pygame.sprite.Group(Bone(animal.x, animal.y, 0, 3)))
+            self.weapons.add (pygame.sprite.Group(Bone(animal.x, animal.y, 0, -3)))
+        elif isinstance (animal, Goat) :
+            self.weapons = pygame.sprite.Group(Horn(animal.x, animal.y, 3, 0))
+            self.weapons.add (pygame.sprite.Group(Horn(animal.x, animal.y, -3, 0)))
+            self.weapons.add (pygame.sprite.Group(Horn(animal.x, animal.y, 0, 3)))
+            self.weapons.add (pygame.sprite.Group(Horn(animal.x, animal.y, 0, -3))) 
+        elif isinstance (animal, Cow) :
+            self.weapons = pygame.sprite.Group(Milk(animal.x, animal.y, 2.5, 0))
+            self.weapons.add (pygame.sprite.Group(Milk(animal.x, animal.y, -2.5, 0)))
+            self.weapons.add (pygame.sprite.Group(Milk(animal.x, animal.y, 0, 2.5)))
+            self.weapons.add (pygame.sprite.Group(Milk(animal.x, animal.y, 0, -2.5))) 
+        elif isinstance (animal, Alligator) :
+            self.weapons = pygame.sprite.Group(Water(animal.x, animal.y, 3, 3))
+            self.weapons.add (pygame.sprite.Group(Water(animal.x, animal.y, -3, 3)))
+            self.weapons.add (pygame.sprite.Group(Water(animal.x, animal.y, -3, -3)))
+            self.weapons.add (pygame.sprite.Group(Water(animal.x, animal.y, 3, -3))) 
+        elif isinstance (animal, Gorilla) :
+            self.weapons = pygame.sprite.Group(Banana(animal.x, animal.y, 3, 3))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, -3, -3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, -3, 3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 3, -3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 0, -3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 0, 3)))
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 3, 0))) 
+            self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, -3, 0)))
+        else :
+            self.moveLion (animal)
+    
     
 # Helper function that checks for collisions and updates the health/existence
 # of the enemies
@@ -311,7 +387,8 @@ class Game(PygameGame):
 
 # View function that first generates grid and then the monsters
     def redrawAll(self, screen):
-        screen.fill(self.lightBlue)
+        
+        screen.fill(self.lightPurple)
         points = []
         reversed = []
         self.getPlantBlocks (screen)
