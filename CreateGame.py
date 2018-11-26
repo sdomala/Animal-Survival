@@ -59,6 +59,7 @@ class Game(PygameGame):
         self.hasAnimal = False
         self.weapons = []
         self.hasWeapon = False
+        
      
         
         
@@ -209,7 +210,11 @@ class Game(PygameGame):
         for weapon in self.weapons:
             for enemy in self.enemies:
                 if pygame.sprite.collide_mask (weapon, enemy) :
-                   self.enemies.remove (enemy)
+                    enemy.health -= weapon.damage
+                    self.weapons.remove (weapon)
+                    print (enemy.health, weapon.damage)
+                    if enemy.health <= 0:
+                        self.enemies.remove (enemy)
 
 # View function that first generates grid and then the monsters
     def redrawAll(self, screen):
