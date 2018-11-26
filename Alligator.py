@@ -5,7 +5,7 @@
 # Last modified 11/25/18
 
 # Citation: Received image from 
-# https://pt.wikipedia.org/wiki/Ficheiro:Cow_cartoon_04.svg
+# https://www.clipartmax.com/middle/m2i8K9i8Z5Z5b1A0_crocodile-clipart/
 
 import pygame
 import random
