@@ -21,6 +21,7 @@ from Lion import Lion
 from pygamegame import PygameGame
 import random
 import math
+import copy
 
 # Game class that generates grid and monsters
 
@@ -69,7 +70,18 @@ class Game(PygameGame):
         self.money = 10
         self.chooseAnimal = True
         self.type = "dog"
-     
+        self.availableSlots = copy.deepcopy (self.boxes)
+        self.tempSlots = copy.deepcopy (self.availableSlots)
+        for row in range (len (self.availableSlots)):
+            for col in self.availableSlots[row] :
+                for plantRow in self.plantBlocks:
+                    if col == plantRow[0]:
+                        self.tempSlots[row].remove (col)
+        self.availableSlots = self.tempSlots
+        
+        print ("available slots", self.availableSlots)
+        print ("all slots", self.boxes)
+        print ("Plant blocks", self.plantBlocks)
         
         
 # Helper function that creates overall grid
@@ -195,12 +207,20 @@ class Game(PygameGame):
 # Helper function that places animal on board
 
     def placeAnimal (self, x, y) :
+        valid = False
         col = (x - self.firstMargin) // self.stepX
         row = (y - self.firstMargin) // self.stepY
         first = self.boxes[row][col]
-        second = self.boxes[row + 1][col + 1]
-        third = self.boxes [row][col + 1]
-        fourth = self.boxes[row + 1][col]
+        for row in self.availableSlots :
+            for item in row:
+                if first == item :
+                    valid = True
+        if valid == False:
+            print ("We're here'")
+            self.chooseAnimal = True
+            return 
+                    
+               
         
         #Creates list of tuples of each box corner
         self.hasAnimal = True
