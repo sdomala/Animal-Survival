@@ -11,6 +11,13 @@ from Monster import Monster
 from Zombie import Zombie
 from Animal import Animal
 from Weapon import Weapon
+from Coin import Coin
+from Dog import Dog
+from Goat import Goat
+from Cow import Cow
+from Alligator import Alligator
+from Gorilla import Gorilla
+from Lion import Lion
 from pygamegame import PygameGame
 import random
 import math
@@ -59,6 +66,7 @@ class Game(PygameGame):
         self.hasAnimal = False
         self.weapons = []
         self.hasWeapon = False
+        self.money = 10
         
      
         
@@ -166,7 +174,6 @@ class Game(PygameGame):
         self.hasAnimal = True
         if self.firstAnimal:
             self.animals = pygame.sprite.Group(Animal(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
-            print (234)
             self.firstAnimal = False
         else :
             self.animals.add (pygame.sprite.Group(Animal(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
@@ -253,8 +260,37 @@ class Game(PygameGame):
                 reversed.append (revPoint)
             pygame.draw.lines (screen, self.black, False, reversed, 3)
             reversed = []
-        self.enemies.draw(screen)
+        self.enemies.draw(screen)                                            
+        self.createCoin(screen)
+        self.createAnimalDisplay (screen)
+        
+        
+        
+# Helper function that creates coin in bottom right corner
 
+    def createCoin (self, screen) :
+        self.coin = pygame.sprite.Group(Coin(self.width - 5 * self.firstMargin,\
+                                            self.height - 0.5 * self.endMargin))
+        self.coin.draw (screen)
+        pygame.font.init() 
+        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        textsurface = myfont.render(str (self.money), False, (0, 0, 0))
+        length = len (str (self.money))
+        screen.blit(textsurface,(self.width - (6 + 0.8 * (length - 1)) * self.firstMargin, \
+                                self.height - 0.66 * self.endMargin))
+        
+
+# Helper function that displays animals at the bottom of the screen
+
+    def createAnimalDisplay (self, screen) :
+        self.displayAnimals = pygame.sprite.Group(Dog(6 * self.firstMargin, self.height - 0.75 * self.endMargin))
+        self.displayAnimals.add (pygame.sprite.Group (Goat (24 * self.firstMargin, self.height - 0.75 * self.endMargin)))
+        self.displayAnimals.add (pygame.sprite.Group (Cow (42 * self.firstMargin, self.height - 0.75 * self.endMargin)))
+        self.displayAnimals.add (pygame.sprite.Group (Alligator (6 * self.firstMargin, self.height - 0.2 * self.endMargin)))
+        self.displayAnimals.add (pygame.sprite.Group (Gorilla (24 * self.firstMargin, self.height - 0.2 * self.endMargin)))
+        self.displayAnimals.add (pygame.sprite.Group (Lion (42 * self.firstMargin, self.height - 0.2 * self.endMargin)))
+        
+        self.displayAnimals.draw (screen)
 
             
 # Helper function that gets plant boxes
