@@ -12,7 +12,7 @@ import Weapon from Weapon
 
 # Animal class with properties and methods for domesticated and wild animals
 
-class Weapon(pygame.sprite.Sprite):
+class Bone(Weapon):
 
 # Constructor method that initializes monster image, location, and speed
     def __init__(self, x, y, xSpeed, ySpeed):
