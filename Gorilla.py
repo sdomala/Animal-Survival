@@ -5,7 +5,7 @@
 # Last modified 11/25/18
 
 # Citation: Received image from 
-# https://pt.wikipedia.org/wiki/Ficheiro:Cow_cartoon_04.svg
+# https://www.kisspng.com/png-gorilla-royalty-free-king-kong-1732806/
 
 import pygame
 import random
