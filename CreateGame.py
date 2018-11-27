@@ -51,25 +51,14 @@ class Game(PygameGame):
         self.numRows = 8
         self.numCols = 8
         self.counter = 0
-        self.plantBlocks = [[]]
+        
         #self.stepX is the width of each grid block
         self.stepX = int ((self.width - (2*self.firstMargin))/ self.numCols)
         self.stepY = int ((self.height - (self.endMargin) - self.firstMargin)/self.numRows)
-        self.boxes = [[]]
         
         actualXChange = (self.width - 2 *self.firstMargin) / self.numCols
         self.offSet = int (self.numCols * (actualXChange) - (self.stepX * self.numCols))        
-        firstBox = [(self.firstMargin, self.firstMargin)] + [( self.firstMargin + self.stepX, self.firstMargin + self.stepY)]
-        self.plantBlocks.append (firstBox)
-        self.createDifferentGrids () #Helper functions
-        self.createDifferentTracks(self.firstMargin, self.firstMargin)
-        self.boxes.remove ([])
-        self.plantBlocks.remove ([])
-        self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0] +  \
-                        self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
-                        self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks)) 
-        self.highlighted = (-1, -1)
+        
         self.firstAnimal = True
         self.hasAnimal = False
         self.weapons = []
@@ -77,14 +66,8 @@ class Game(PygameGame):
         self.money = 10
         self.chooseAnimal = True
         self.type = "dog"
-        self.availableSlots = copy.deepcopy (self.boxes)
-        self.tempSlots = copy.deepcopy (self.availableSlots)
-        for row in range (len (self.availableSlots)):
-            for col in self.availableSlots[row] :
-                for plantRow in self.plantBlocks:
-                    if col == plantRow[0]:
-                        self.tempSlots[row].remove (col)
-        self.availableSlots = self.tempSlots
+        
+        self.makeVariousGrids() 
         
         self.dogPrice = 5
         self.goatPrice = 10
@@ -96,10 +79,37 @@ class Game(PygameGame):
         self.stopMoving = False
         self.weaponCounter = 0
         self.levelDisplay = False
-        
+        self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0] +  \
+                        self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks)) 
+        self.highlighted = (-1, -1)
         self.firstStep = 0
         
-        
+
+# Helper funcion that makes various grids
+
+    def makeVariousGrids (self) :
+        self.boxes = [[]]
+        self.plantBlocks = [[]]
+        firstBox = [(self.firstMargin, self.firstMargin)] + [( self.firstMargin + self.stepX, self.firstMargin + self.stepY)]
+        self.plantBlocks.append (firstBox)
+        self.createDifferentGrids () #Helper functions
+        self.createDifferentTracks(self.firstMargin, self.firstMargin)
+        if [] in self.boxes:
+            self.boxes.remove ([])
+        if [] in self.plantBlocks: 
+            self.plantBlocks.remove ([])
+        self.availableSlots = copy.deepcopy (self.boxes)
+        self.tempSlots = copy.deepcopy (self.availableSlots)
+        for row in range (len (self.availableSlots)):
+            for col in self.availableSlots[row] :
+                for plantRow in self.plantBlocks:
+                    if col == plantRow[0]:
+                        self.tempSlots[row].remove (col)
+        self.availableSlots = self.tempSlots
+
+
 # Helper function that creates overall grid
 
     def createDifferentGrids (self) :
@@ -374,6 +384,7 @@ class Game(PygameGame):
             self.level += 1
             self.stopMoving = False #Increment level and allow movement again
             self.levelDisplay = True
+            self.makeVariousGrids()
             
         # Generates the first enemy of each level here
         if self.enemies == [] :
