@@ -21,7 +21,7 @@ class Banana(Weapon):
     def __init__(self, x, y, xSpeed, ySpeed):
         super().__init__ (x, y, xSpeed, ySpeed)
         self.damage = 64
-        self.image = pygame.image.load ('Water2.png').convert_alpha()        
+        self.image = pygame.image.load ('banana.png').convert_alpha()        
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x - self.width//2, self.y - self.height//2,
