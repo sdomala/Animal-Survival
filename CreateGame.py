@@ -97,6 +97,8 @@ class Game(PygameGame):
         self.weaponCounter = 0
         self.levelDisplay = False
         
+        self.firstStep = 0
+        
         
 # Helper function that creates overall grid
 
@@ -329,17 +331,21 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
-        if self.level == 0:
+        if self.level == 0 or self.levelDisplay: #Doesn't increment various counters and create/move objects 
             return
         self.counter += 1
         self.weaponCounter += 1
         if self.counter % 1410 == 0: #Every 30 seconds, goes to next level
+            self.firstStep = 0
             self.stopMoving = True
         
         noEnemyOnScreen = True
         
         if self.stopMoving:
-            self.counter -= 1
+            if self.firstStep == 0 :
+                self.firstStep = 1
+            elif self.firstStep == 1:
+                self.counter -= 1
             for enemy in self.enemies:
                 if enemy.x < self.width :
                     noEnemyOnScreen = False #False if there's still an enemy on the board
@@ -349,8 +355,7 @@ class Game(PygameGame):
             self.level += 1
             self.stopMoving = False #Increment level and allow movement again
             self.levelDisplay = True
-        
-        
+            
         # Generates the first enemy of each level here
         if self.level == 1:
             if self.enemies == [] :
@@ -371,6 +376,26 @@ class Game(PygameGame):
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))
+                        
+        else :
+            if self.enemies == [] :
+                whichEnemy = random.randint (1,3)
+                if whichEnemy == 1:
+                    self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks))
+                elif whichEnemy == 2:
+                    self.enemies = pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks))
+                else:
+                    self.enemies = pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks))
+                    
         
             
         if self.counter % 141 == 0 and not self.stopMoving: #Every 3 seconds generates an enemy
@@ -512,15 +537,23 @@ class Game(PygameGame):
 # Function that displays next level 
 
     def displayNextLevel (self, screen) :
-        print ("isplaying level")
         screen.fill (self.black) 
         pygame.font.init() 
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
         textsurface = myfont.render("Welcome to Level " + str (self.level) + "!", False, (255,255,255))
-        screen.blit(textsurface,(100, self.height/2 - 100))
+        screen.blit(textsurface,(self.width/2 - 135, self.height/2 - 100))
+        
+        textsurface2 = myfont.render ("Press spacebar to continue", False, (255, 255, 255))
+        screen.blit (textsurface2, (self.width/2 - 170, self.height/2 + 100))
         
         
+# Keypressed function to switch between levels
 
+    def keyPressed(self, keyCode, modifier):
+        if keyCode == 32: #This is the value associated with the space bar
+            if self.levelDisplay:
+                self.levelDisplay = False
+                
 # View function that first generates grid and then the monsters
     def redrawAll(self, screen):
         if self.level == 0:
