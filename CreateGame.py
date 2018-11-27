@@ -85,6 +85,14 @@ class Game(PygameGame):
                         self.tempSlots[row].remove (col)
         self.availableSlots = self.tempSlots
         
+        self.dogPrice = 5
+        self.goatPrice = 10
+        self.cowPrice = 20
+        self.alligatorPrice =50
+        self.gorillaPrice = 75
+        self.lionPrice = 100
+        
+        
         
 # Helper function that creates overall grid
 
@@ -180,17 +188,45 @@ class Game(PygameGame):
     def getType (self, x, y) :
             self.chooseAnimal = False
             if x >= ((6 * self.firstMargin) - 29) and x<= (6 * self.firstMargin + 29) and y <= ((self.height - 0.75 * self.endMargin) + 29) and y >= ((self.height - 0.75 * self.endMargin) - 29) :
-                self.type = "dog"
+                if self.money >= self.dogPrice:
+                    self.type = "dog"
+                else:
+                    self.chooseAnimal = True
+                    return
             elif x >= ((24 * self.firstMargin) - (53/2)) and x <= ((24 * self.firstMargin) + (53/2)) and y >= ((self.height - 0.75 * self.endMargin) - (53/2)) and y <= ((self.height - 0.75 * self.endMargin) + (53/2)):
-                self.type = "goat"
+                if self.money >= self.goatPrice :
+                    self.type = "goat"
+                else :
+                    self.chooseAnimal = True
+                    return
             elif x >= ((42 * self.firstMargin) - (73/2)) and x <= ((42 * self.firstMargin) + (73/2)) and y >= ((self.height - 0.75 * self.endMargin) - (51/2)) and y <= ((self.height - 0.75 * self.endMargin) + (51/2)) :
-                self.type = "cow"
+                if self.money >= self.cowPrice:
+                    self.type = "cow"
+                else :
+                    self.chooseAnimal = True
+                    return
+                
             elif x >= ((6 * self.firstMargin) - (55/2)) and x <= ((6 * self.firstMargin) + (55/2)) and y <= ((self.height - 0.2 * self.endMargin) + (57/2)) and y >= ((self.height - 0.2 * self.endMargin) - (57/2))  :
-                self.type = "alligator"
+                if self.money >= self.alligatorPrice:
+                    self.type = "alligator"
+                else :
+                    self.chooseAnimal = True
+                    return
+                
             elif x >= ((24 * self.firstMargin) - (39/2)) and x <= ((24 * self.firstMargin) + (39/2)) and y <= ((self.height - 0.2 * self.endMargin) + 25) and y >= ((self.height - 0.2 * self.endMargin) - 25) :
-                self.type = "gorilla"
+                if self.money >= self.gorillaPrice :
+                    self.type = "gorilla"
+                else:
+                    self.chooseAnimal = True
+                    return
+                
             elif x >= ((42 * self.firstMargin) - 29) and x <= ((42 * self.firstMargin) + 29) and y <= ((self.height - 0.2 * self.endMargin) + 27) and y >= ((self.height - 0.2 * self.endMargin) - 27):
-                self.type = "lion"
+                if self.money >= self.lionPrice:
+                    self.type = "lion"
+                else :
+                    self.chooseAnimal = True
+                    return
+                
             else :
                 self.chooseAnimal = True
 
@@ -237,36 +273,42 @@ class Game(PygameGame):
         #Creates list of tuples of each box corner
         self.hasAnimal = True
         if self.type == "dog" :
+            self.money -= self.dogPrice
             if self.firstAnimal:
                 self.animals = pygame.sprite.Group(Dog(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
                 self.firstAnimal = False
             else :
                 self.animals.add (pygame.sprite.Group(Dog(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
         elif self.type == "goat" :
+            self.money -= self.goatPrice
             if self.firstAnimal:
                 self.animals = pygame.sprite.Group(Goat(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
                 self.firstAnimal = False
             else :
                 self.animals.add (pygame.sprite.Group(Goat(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
         elif self.type == "cow" :
+            self.money -= self.cowPrice
             if self.firstAnimal :
                 self.animals = pygame.sprite.Group(Cow(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
                 self.firstAnimal = False
             else :
                 self.animals.add (pygame.sprite.Group(Cow(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
         elif self.type == "alligator":
+            self.money -= self.alligatorPrice
             if self.firstAnimal:
                 self.animals = pygame.sprite.Group(Alligator(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
                 self.firstAnimal = False
             else :
                 self.animals.add (pygame.sprite.Group(Alligator(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
         elif self.type == "gorilla":
+            self.money -= self.gorillaPrice
             if self.firstAnimal:
                 self.animals = pygame.sprite.Group(Gorilla(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
                 self.firstAnimal = False
             else :
                 self.animals.add (pygame.sprite.Group(Gorilla(first[0] + self.stepX / 2, first[1] + self.stepY / 2)))
         elif self.type == "lion":
+            self.money -= self.lionPrice
             if self.firstAnimal:
                 self.animals = pygame.sprite.Group(Lion(first[0] + self.stepX / 2, first[1] + self.stepY / 2)) 
                 self.firstAnimal = False
