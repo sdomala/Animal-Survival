@@ -31,7 +31,7 @@ class Enemy(pygame.sprite.Sprite):
                       # places where enemies change direction
         self.index = 0
         self.plantBlocks = plantBlocks
-        self.health = 12
+        self.health = 20
         
       
 
