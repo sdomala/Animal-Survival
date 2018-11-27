@@ -9,6 +9,7 @@ import pygame
 from Enemy import Enemy
 from Monster import Monster
 from Zombie import Zombie
+from Ghost import Ghost
 from Animal import Animal
 from Weapon import Weapon
 from Bone import Bone
@@ -64,7 +65,7 @@ class Game(PygameGame):
         self.createDifferentTracks(self.firstMargin, self.firstMargin)
         self.boxes.remove ([])
         self.plantBlocks.remove ([])
-        self.enemies = pygame.sprite.Group(Zombie(self.boxes[0][0][0] +  \
+        self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0] +  \
                         self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks)) 
@@ -91,7 +92,7 @@ class Game(PygameGame):
         self.alligatorPrice =50
         self.gorillaPrice = 75
         self.lionPrice = 100
-        
+        self.level = 0
         
         
 # Helper function that creates overall grid
@@ -233,6 +234,10 @@ class Game(PygameGame):
 # MousePressed function allows you to highlight cells
 
     def mousePressed (self, x, y) :
+        if self.level == 0:
+            if (x >= self.width/2 - 75) and x <= (self.width/2 + 75) and y >= (self.height/2 + 100) and y <= (self.height/2 + 200):
+                self.level += 1
+                return
         if self.chooseAnimal:
             self.getType (x, y)
             
@@ -322,13 +327,41 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
+        if self.level == 0:
+            return
         self.counter += 1
+        if self.counter % 1410 == 0: #Every 30 seconds, goes to next level
+            self.level += 1
+            self.enemies = []
+        
+        
+        if self.level == 1:
+            if self.enemies == [] :
+                self.enemies = pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks))
+        elif self.level == 2:
+            if self.enemies == [] :
+                self.enemies = pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks))
+        
+            
         if self.counter % 141 == 0: #Every 3 seconds generates a enemies
             y = random.randint (0, 7)
-            self.enemies.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
+            if self.level == 1:
+                self.enemies.add (pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))) 
+            elif self.level == 2:
+                self.enemies.add (pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks)))
+      
         self.enemies.update(self.width, self.height)
         
         
@@ -427,8 +460,30 @@ class Game(PygameGame):
                     if enemy.health <= 0:
                         self.enemies.remove (enemy)
 
+    
+# Helper function that displays introduction screen
+
+    def createInitialScreen (self, screen) :
+        screen.fill (self.lightSalmon)
+        pygame.font.init() 
+        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        textsurface = myfont.render("Welcome to Animal Survival!", False, (0,0,0))
+        screen.blit(textsurface,(100, self.height/2 - 100))
+        
+        textsurface2 = myfont.render("Click the 'Go!' Button to Begin!", False, (0,0,0))
+        screen.blit (textsurface2, (100, self.height/2))
+        pygame.draw.polygon (screen, (102, 255, 102), [(self.width/2 - 75, self.height/2 + 100), (self.width/2 + 75, self.height/2 + 100), (self.width/2 + 75, self.height/2 + 200), (self.width/2 - 75, self.height/2 + 200)], 0)
+        
+        myfont = pygame.font.SysFont ('Comic Sans MS', 50)
+        textsurface3 = myfont.render ("Go!", False, (0,0,0))
+        screen.blit (textsurface3, (self.width/2 - 32, self.height/2 + 107))
+    
+
 # View function that first generates grid and then the monsters
     def redrawAll(self, screen):
+        if self.level == 0:
+            self.createInitialScreen (screen)
+            return
         
         screen.fill(self.lightPurple)
         points = []
