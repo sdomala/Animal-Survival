@@ -93,6 +93,9 @@ class Game(PygameGame):
         self.gorillaPrice = 75
         self.lionPrice = 100
         self.level = 0
+        self.stopMoving = False
+        self.weaponCounter = 0
+        self.levelDisplay = False
         
         
 # Helper function that creates overall grid
@@ -111,7 +114,6 @@ class Game(PygameGame):
 
     def createDifferentTracks (self, xValue, yValue) :
         if (xValue + self.stepX)  >= (self.width - self.firstMargin - self.offSet) :
-            print ("Good luck!")
             return self.plantBlocks
         for move in self.getPossibleMoves ():
             tempXValue = xValue + move[0]
@@ -330,14 +332,29 @@ class Game(PygameGame):
         if self.level == 0:
             return
         self.counter += 1
+        self.weaponCounter += 1
         if self.counter % 1410 == 0: #Every 30 seconds, goes to next level
-            self.level += 1
+            self.stopMoving = True
+        
+        noEnemyOnScreen = True
+        
+        if self.stopMoving:
+            self.counter -= 1
+            for enemy in self.enemies:
+                if enemy.x < self.width :
+                    noEnemyOnScreen = False #False if there's still an enemy on the board
+        
+        if noEnemyOnScreen and self.stopMoving: #If there's no enemies on the screen and enemies aren't moving
             self.enemies = []
+            self.level += 1
+            self.stopMoving = False #Increment level and allow movement again
+            self.levelDisplay = True
         
         
+        # Generates the first enemy of each level here
         if self.level == 1:
             if self.enemies == [] :
-                self.enemies = pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
+                self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))
@@ -348,11 +365,18 @@ class Game(PygameGame):
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))
         
+        elif self.level == 3:
+            if self.enemies == [] :
+                self.enemies = pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks))
+        
             
-        if self.counter % 141 == 0: #Every 3 seconds generates a enemies
+        if self.counter % 141 == 0 and not self.stopMoving: #Every 3 seconds generates an enemy
             y = random.randint (0, 7)
             if self.level == 1:
-                self.enemies.add (pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
+                self.enemies.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))) 
@@ -361,11 +385,17 @@ class Game(PygameGame):
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks)))
+                        
+            elif self.level == 3:
+                self.enemies.add (pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks)))
       
         self.enemies.update(self.width, self.height)
         
         
-        if self.hasAnimal and self.counter % 47 == 0:
+        if self.hasAnimal and self.weaponCounter % 47 == 0:
             for animal in self.animals:
                 if self.hasWeapon == False :
                     self.createInitialWeapons(animal)
@@ -374,7 +404,6 @@ class Game(PygameGame):
                     self.createLaterWeapons (animal)
         if self.hasWeapon:
             self.weapons.update ()
-            
         self.updateCollisions() 
 
 # Helper function for creating later weapons
@@ -477,12 +506,29 @@ class Game(PygameGame):
         myfont = pygame.font.SysFont ('Comic Sans MS', 50)
         textsurface3 = myfont.render ("Go!", False, (0,0,0))
         screen.blit (textsurface3, (self.width/2 - 32, self.height/2 + 107))
-    
+
+
+
+# Function that displays next level 
+
+    def displayNextLevel (self, screen) :
+        print ("displaying level")
+        screen.fill (self.black) 
+        pygame.font.init() 
+        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        textsurface = myfont.render("Welcome to Level " + str (self.level) + "!", False, (255,255,255))
+        screen.blit(textsurface,(100, self.height/2 - 100))
+        
+        
 
 # View function that first generates grid and then the monsters
     def redrawAll(self, screen):
         if self.level == 0:
             self.createInitialScreen (screen)
+            return
+            
+        if self.levelDisplay:
+            self.displayNextLevel(screen)
             return
         
         screen.fill(self.lightPurple)
@@ -505,8 +551,6 @@ class Game(PygameGame):
                 reversed.append (revPoint)
                 
             pygame.draw.lines(screen, self.black, False, points, 3)
-            #pygame.draw.lines (screen, self.black, False, reversed, 3)
-            # print ("Points", points)
             
             points = []
             reversed = []
