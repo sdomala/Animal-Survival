@@ -385,6 +385,20 @@ class Game(PygameGame):
             self.stopMoving = False #Increment level and allow movement again
             self.levelDisplay = True
             self.makeVariousGrids()
+            for animal in self.animals:
+                self.animals.remove(animal)
+                if isinstance (animal, Dog) :
+                    self.money += self.lionPrice
+                elif isinstance (animal, Goat) :
+                    self.money += self.goatPrice
+                elif isinstance (animal, Cow) :
+                    self.money += self.cowPrice
+                elif isinstance (animal, Alligator) :
+                    self.money += self.alligatorPrice
+                elif isinstance (animal, Gorilla) :
+                    self.money += self.gorillaPrice
+                else:
+                    self.money += self.lionPrice
             
         # Generates the first enemy of each level here
         if self.enemies == [] :
