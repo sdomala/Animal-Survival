@@ -326,13 +326,32 @@ class Game(PygameGame):
         self.chooseAnimal = True
   
 
-            
+# Helper funcion that deletes enemies off board
+
+    def deleteEnemies (self) :
+        for enemy in self.enemies:
+            if enemy.x > (self.boxes[-1][-1][0]) :
+                self.enemies.remove (enemy)
+
+           
+        
+    
+
+# Helper function that deletes weapons off board
+
+    def deleteWeapons (self) :
+        for weapon in self.weapons :
+            if weapon.x > self.boxes[-1][-1][0] or weapon.x < self.firstMargin or weapon.y < self.firstMargin or weapon.y > self.boxes[-1][-1][1] :
+                self.weapons.remove (weapon)
+     
 
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
         if self.level == 0 or self.levelDisplay: #Doesn't increment various counters and create/move objects 
             return
+        self.deleteEnemies()
+        self.deleteWeapons()
         self.counter += 1
         self.weaponCounter += 1
         if self.counter % 1410 == 0: #Every 30 seconds, goes to next level
@@ -343,7 +362,7 @@ class Game(PygameGame):
         
         if self.stopMoving:
             if self.firstStep == 0 :
-                self.firstStep = 1
+                self.firstStep +=1
             elif self.firstStep == 1:
                 self.counter -= 1
             for enemy in self.enemies:
@@ -357,28 +376,24 @@ class Game(PygameGame):
             self.levelDisplay = True
             
         # Generates the first enemy of each level here
-        if self.level == 1:
-            if self.enemies == [] :
+        if self.enemies == [] :
+            if self.level == 1:
                 self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))
-        elif self.level == 2:
-            if self.enemies == [] :
+            elif self.level == 2:
                 self.enemies = pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))
         
-        elif self.level == 3:
-            if self.enemies == [] :
+            elif self.level == 3:
                 self.enemies = pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))
-                        
-        else :
-            if self.enemies == [] :
+            else :
                 whichEnemy = random.randint (1,3)
                 if whichEnemy == 1:
                     self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0]\
@@ -395,6 +410,7 @@ class Game(PygameGame):
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks))
+            self.counter += 1
                     
         
             
@@ -416,6 +432,25 @@ class Game(PygameGame):
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.plantBlocks)))
+            
+            else :
+                whichEnemy = random.randint (1,3)
+                if whichEnemy == 1:
+                    self.enemies.add(pygame.sprite.Group(Monster(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks)))
+                elif whichEnemy == 2:
+                    self.enemies.add(pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks)))
+                else:
+                    self.enemies.add(pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
+                        + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.plantBlocks)))
+              
       
         self.enemies.update(self.width, self.height)
         
@@ -513,6 +548,12 @@ class Game(PygameGame):
                     self.weapons.remove (weapon)
                     if enemy.health <= 0:
                         self.enemies.remove (enemy)
+                        if isinstance (enemy, Monster) :
+                            self.money += 1
+                        elif isinstance (enemy, Zombie) :
+                            self.money += 5
+                        elif isinstance (enemy, Ghost) :
+                            self.money += 10
 
     
 # Helper function that displays introduction screen
@@ -553,6 +594,7 @@ class Game(PygameGame):
         if keyCode == 32: #This is the value associated with the space bar
             if self.levelDisplay:
                 self.levelDisplay = False
+                self.weaponCounter -= 1
                 
 # View function that first generates grid and then the monsters
     def redrawAll(self, screen):
