@@ -512,7 +512,7 @@ class Game(PygameGame):
 # Function that displays next level 
 
     def displayNextLevel (self, screen) :
-        print ("displaying level")
+        print ("isplaying level")
         screen.fill (self.black) 
         pygame.font.init() 
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
