@@ -9,11 +9,11 @@ import random
 import math
 
 
-# Animal class with properties and methods for domesticated and wild animals
+# Coin class with properties and methods 
 
 class Coin(pygame.sprite.Sprite):
 
-# Constructor method that initializes monster image, location, and speed
+# Constructor method that initializes coin image, location
     def __init__(self, x, y):
         super(Coin, self).__init__()
         self.x, self.y = x, y
