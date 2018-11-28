@@ -20,7 +20,7 @@ class Banana(Weapon):
 # Constructor method that initializes water damage, position, and speed
     def __init__(self, x, y, xSpeed, ySpeed):
         super().__init__ (x, y, xSpeed, ySpeed)
-        self.damage = 64
+        self.damage = 50
         self.image = pygame.image.load ('banana.png').convert_alpha()        
         self.width = self.image.get_width()
         self.height = self.image.get_height()
