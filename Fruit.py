@@ -17,7 +17,7 @@ class Fruit(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super(Fruit, self).__init__()
         self.x, self.y = x, y
-        self.image = pygame.image.load ('Grass2.png').convert_alpha()        
+        self.image = pygame.image.load ('Fruits.png').convert_alpha()        
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x - self.width//2, self.y - self.height//2,
