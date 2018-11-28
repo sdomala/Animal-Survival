@@ -36,6 +36,7 @@ class Enemy(pygame.sprite.Sprite):
         self.stepY = stepY
         self.stepX = stepX
         self.direction = direction
+        self.stopTheEnemy = False
         
 
 
@@ -46,49 +47,6 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = pygame.Rect(self.x - self.width//2, self.y - self.height//2,
                                 self.width, self.height)
 
-
-
-# Helper function that checks if the enemy is at the grass, given the direction
-
-   ##   def atGrass (self) :
-    #     distance = ((((self.grassSlot[0] + self.stepX/2) - self.x) ** 2) + (((self.grassSlot[1] + self.stepY/2) - self.stepY) ** 2)) ** (0.5)
-    #     # if distance <= (self.stepX):
-    #     #     print ("MADE IT MADE IT MADE IT MADE IT MADE IT MADE IT")
-    #     #     return True
-    #     
-    #     print (self.x, self.y)
-    #     print (self.grassSlot)
-    #     
-    #     if self.direction == "up" :
-    #         if self.y <= (self.grassSlot[1] + self.stepY * (1.5) + 2) and self.y > (self.grassSlot[1] + self.stepY) :
-    #             print ("we're enough y")
-    #             if self.x <= (self.grassSlot[0] + self.stepX/2) and self.x > self.grassSlot[0] :
-    #                 print ("we're enough x'")
-    #                 return True
-    #                 
-    #     elif self.direction == "down" :
-    #         if self.y >= (self.grassSlot[1] - self.stepY * (0.5) - 2) and self.y < (self.grassSlot[1]) :
-    #             print ("We're enough y")
-    #             if self.x <= (self.grassSlot[0] + self.stepX/2) and self.x > (self.grassSlot[0]) :
-    #                 print ("we're enough x")
-    #                 return True
-    #                 
-    #                 
-    #     elif self.direction == "left" :
-    #         if abs(self.y - (self.grassSlot[1] + self.stepY/2)) < 2  :
-    #             print ("we're enough y")
-    #             if self.x <= (self.grassSlot[0] + self.stepX * (1.5)) and self.x > (self.grassSlot[0]) :
-    #                 print ("we're enough x")
-    #                 return True
-    #     
-    #     elif self.direction == "right" :
-    #         if abs(self.y - (self.grassSlot[1] + self.stepY/2)) < 2 :
-    #             print ("we're enough y")
-    #             if self.x <= (self.grassSlot[0] - self.stepX/2) and self.x > (self.grassSlot[0] - self.stepX/2 -3) :
-    #                 print ("we're enough x")
-    #                 return True
-    #     
-        
         
             
     
@@ -99,9 +57,8 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self, screenWidth, screenHeight):
         
-        # if self.atGrass () :
-        #     print ("we're at grass", self. direction)
-        #     return
+        if self.stopTheEnemy:
+            return
         
         if self.index == (len (self.plantBlocks) -1) : #Checks if at last block
             self.x += self.xSpeed
