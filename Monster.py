@@ -4,6 +4,9 @@
 # Section: O
 # Last modified 11/21/18
 
+# Citation: Got image from
+# https://friendlystock.com/product/mud-monster/
+
 from Enemy import *
 
 # Monster class that inherits all Enemy properties/methods
