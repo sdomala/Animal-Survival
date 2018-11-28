@@ -4,6 +4,9 @@
 # Section: O
 # Last modified 11/20/18
 
+# Citation: Got this starter class from Pygame manual from 112 website
+# Created by Lukas Peraza
+
 
 import pygame
 from Enemy import Enemy
@@ -27,6 +30,7 @@ from Lion import Lion
 from Grass import Grass
 from Fruit import Fruit
 from Barn import Barn
+from SmallCoin import SmallCoin
 from pygamegame import PygameGame
 import random
 import math
@@ -76,7 +80,7 @@ class Game(PygameGame):
         self.cowPrice = 20
         self.alligatorPrice =50
         self.gorillaPrice = 75
-        self.lionPrice = 1
+        self.lionPrice = 100
         self.level = 0
         self.stopMoving = False
         self.weaponCounter = 0
@@ -967,9 +971,9 @@ class Game(PygameGame):
             pygame.draw.lines (screen, self.black, False, reversed, 3)
             reversed = []
                                                     
-        self.createCoin(screen)
-        self.createAnimalDisplay (screen)
         
+        self.createAnimalDisplay (screen)
+        self.createCoin(screen)
         
         if not self.noGrass:
             self.grass.draw (screen)
@@ -993,18 +997,54 @@ class Game(PygameGame):
         length = len (str (self.money))
         screen.blit(textsurface,(self.width - (6 + 0.8 * (length - 1)) * self.firstMargin, \
                                 self.height - 0.66 * self.endMargin))
+                                
+                                
+           
+        myfont = pygame.font.SysFont ('Comic Sans MS', 24)   
+        
+        dog = myfont.render(str (self.dogPrice), False, (0, 0, 0))
+        screen.blit(dog,(6 * self.firstMargin + 60 - 8, self.height - 0.75 * self.endMargin - 17))
+        
+        
+        
+        goat = myfont.render (str (self.goatPrice), False, (0,0,0))
+        screen.blit (goat, (24 * self.firstMargin + 60 -15, self.height - 0.75 * self.endMargin -17))
+        
+        cow = myfont.render (str (self.cowPrice), False, (0,0,0)) 
+        screen.blit (cow, (42 * self.firstMargin + 60 - 15, self.height - 0.75 * self.endMargin - 17))
+        
+        alligator = myfont.render (str (self.alligatorPrice), False, (0,0,0))
+        screen.blit (alligator, (6 * self.firstMargin + 60-15, self.height - 0.2 * self.endMargin-17))
+        
+        gorilla = myfont.render (str (self.gorillaPrice), False, (0,0,0))
+        screen.blit (gorilla, (24 * self.firstMargin + 60-15, self.height - 0.2 * self.endMargin-17))
+        
+        lion = myfont.render (str (self.lionPrice), False, (0,0,0))
+        screen.blit (lion, (42 * self.firstMargin + 60-22, self.height - 0.2 * self.endMargin-17))
+        
         
 
-# Helper function that displays animals at the bottom of the screen
+# Helper function that displays animals and prices at the bottom of the screen
 
     def createAnimalDisplay (self, screen) :
         self.displayAnimals = pygame.sprite.Group(Dog(6 * self.firstMargin, self.height - 0.75 * self.endMargin))
-        self.displayAnimals.add (pygame.sprite.Group (Goat (24 * self.firstMargin, self.height - 0.75 * self.endMargin)))
-        self.displayAnimals.add (pygame.sprite.Group (Cow (42 * self.firstMargin, self.height - 0.75 * self.endMargin)))
-        self.displayAnimals.add (pygame.sprite.Group (Alligator (6 * self.firstMargin, self.height - 0.2 * self.endMargin)))
-        self.displayAnimals.add (pygame.sprite.Group (Gorilla (24 * self.firstMargin, self.height - 0.2 * self.endMargin)))
-        self.displayAnimals.add (pygame.sprite.Group (Lion (42 * self.firstMargin, self.height - 0.2 * self.endMargin)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (6 * self.firstMargin + 60, self.height - 0.75 * self.endMargin)))
         
+        self.displayAnimals.add (pygame.sprite.Group (Goat (24 * self.firstMargin, self.height - 0.75 * self.endMargin)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (24 * self.firstMargin + 60, self.height - 0.75 * self.endMargin)))
+        
+        self.displayAnimals.add (pygame.sprite.Group (Cow (42 * self.firstMargin, self.height - 0.75 * self.endMargin)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (42 * self.firstMargin + 60, self.height - 0.75 * self.endMargin)))
+        
+        self.displayAnimals.add (pygame.sprite.Group (Alligator (6 * self.firstMargin, self.height - 0.2 * self.endMargin)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (6 * self.firstMargin + 60, self.height - 0.2 * self.endMargin)))
+        
+        self.displayAnimals.add (pygame.sprite.Group (Gorilla (24 * self.firstMargin, self.height - 0.2 * self.endMargin)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (24 * self.firstMargin + 60, self.height - 0.2 * self.endMargin)))
+        
+        self.displayAnimals.add (pygame.sprite.Group (Lion (42 * self.firstMargin, self.height - 0.2 * self.endMargin)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (42 * self.firstMargin + 60, self.height - 0.2 * self.endMargin)))
+
         self.displayAnimals.draw (screen)
 
 
