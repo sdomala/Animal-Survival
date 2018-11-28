@@ -86,6 +86,7 @@ class Game(PygameGame):
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)) 
         self.highlighted = (-1, -1)
         self.firstStep = 0
+        self.grass = pygame.sprite.Group (Grass (self.grassSlot[0] + 35, self.grassSlot[1] + 20))
       
       
 
@@ -103,21 +104,21 @@ class Game(PygameGame):
                 col = row [0]
                 # print (col)    
                 if (yCoordinate - self.stepY) == col[1] and xCoordinate == col[0] or (yCoordinate - self.stepY < self.firstMargin):
-                    print ("up")
+                    # print ("up")
                     up = False
                 if (yCoordinate + self.stepY) == col[1] and xCoordinate == col[0] or (yCoordinate + self.stepY) >= (self.height - self.endMargin):
-                    print ("Down")
+                    # print ("Down")
                     down = False
                 if (xCoordinate + self.stepX) == col[0] and yCoordinate == col[1] or (xCoordinate + self.stepX) >= self.boxes[-1][-1][0] :
-                    print ("right")
+                    # print ("right")
                     right = False
                 if (xCoordinate - self.stepX == col [0]) and yCoordinate == col[1] or (xCoordinate - self.stepX < self.firstMargin) :
-                    print ("left")
+                    # print ("left")
                     left = False
         
         
-        print (block, xCoordinate, yCoordinate) 
-        print (self.plantBlocks)
+        # print (block, xCoordinate, yCoordinate) 
+        # print (self.plantBlocks)
         if up:
             self.direction = "up"
             self.grassSlot = (xCoordinate, yCoordinate - self.stepY)
@@ -616,8 +617,8 @@ class Game(PygameGame):
 # of the enemies
 
     def updateCollisions (self) :
-        for weapon in self.weapons:
-            for enemy in self.enemies:
+        for enemy in self.enemies:
+            for weapon in self.weapons:
                 if pygame.sprite.collide_mask (weapon, enemy) :
                     enemy.health -= weapon.damage
                     self.weapons.remove (weapon)
@@ -629,6 +630,12 @@ class Game(PygameGame):
                             self.money += 5
                         elif isinstance (enemy, Ghost) :
                             self.money += 10
+                            
+            for grass in self.grass:
+                if pygame.sprite.collide_mask (enemy, grass) :
+                    print ("You're over here")
+                else :
+                    print ("no collision")
 
     
 # Helper function that displays introduction screen
@@ -718,7 +725,6 @@ class Game(PygameGame):
         self.createCoin(screen)
         self.createAnimalDisplay (screen)
         
-        self.grass = pygame.sprite.Group (Grass (self.grassSlot[0] + 35, self.grassSlot[1] + 20))
         self.grass.draw (screen)
         
         
