@@ -24,6 +24,7 @@ from Cow import Cow
 from Alligator import Alligator
 from Gorilla import Gorilla
 from Lion import Lion
+from Grass import Grass
 from pygamegame import PygameGame
 import random
 import math
@@ -68,7 +69,7 @@ class Game(PygameGame):
         self.type = "dog"
         
         self.makeVariousGrids() 
-        
+        self.getGrass()
         self.dogPrice = 5
         self.goatPrice = 10
         self.cowPrice = 20
@@ -82,10 +83,59 @@ class Game(PygameGame):
         self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0] +  \
                         self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks)) 
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)) 
         self.highlighted = (-1, -1)
         self.firstStep = 0
+      
+      
+
+# Helper function that designates specific slot for grass
+
+    def getGrass (self) :
+        block = random.randint (0, len (self.plantBlocks) - 1)
+        up = True
+        down = True
+        right = True
+        left = True
+        yCoordinate = self.plantBlocks[block][0][1]
+        xCoordinate = self.plantBlocks[block][0][0]
+        for row in self.plantBlocks:
+                col = row [0]
+                # print (col)    
+                if (yCoordinate - self.stepY) == col[1] and xCoordinate == col[0] or (yCoordinate - self.stepY < self.firstMargin):
+                    print ("up")
+                    up = False
+                if (yCoordinate + self.stepY) == col[1] and xCoordinate == col[0] or (yCoordinate + self.stepY) >= (self.height - self.endMargin):
+                    print ("Down")
+                    down = False
+                if (xCoordinate + self.stepX) == col[0] and yCoordinate == col[1] or (xCoordinate + self.stepX) >= self.boxes[-1][-1][0] :
+                    print ("right")
+                    right = False
+                if (xCoordinate - self.stepX == col [0]) and yCoordinate == col[1] or (xCoordinate - self.stepX < self.firstMargin) :
+                    print ("left")
+                    left = False
         
+        
+        print (block, xCoordinate, yCoordinate) 
+        print (self.plantBlocks)
+        if up:
+            self.direction = "up"
+            self.grassSlot = (xCoordinate, yCoordinate - self.stepY)
+        elif down:
+            self.direction = "down"
+            self.grassSlot = (xCoordinate, yCoordinate + self.stepY)
+        elif right:
+            self.direction = "right"
+            self.grassSlot = (xCoordinate + self.stepX, yCoordinate)
+        elif left:
+            self.direction = "left"
+            self.grassSlot = (xCoordinate - self.stepX, yCoordinate) 
+        else:
+            self.getGrass()
+            
+        
+        
+    
 
 # Helper funcion that makes various grids
 
@@ -406,35 +456,35 @@ class Game(PygameGame):
                 self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
             elif self.level == 2:
                 self.enemies = pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
         
             elif self.level == 3:
                 self.enemies = pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
             else :
                 whichEnemy = random.randint (1,3)
                 if whichEnemy == 1:
                     self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
                 elif whichEnemy == 2:
                     self.enemies = pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
                 else:
                     self.enemies = pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
             self.counter += 1
                     
         
@@ -445,18 +495,18 @@ class Game(PygameGame):
                 self.enemies.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks))) 
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))) 
             elif self.level == 2:
                 self.enemies.add (pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks)))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
                         
             elif self.level == 3:
                 self.enemies.add (pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks)))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
             
             else :
                 whichEnemy = random.randint (1,3)
@@ -464,17 +514,17 @@ class Game(PygameGame):
                     self.enemies.add(pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks)))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
                 elif whichEnemy == 2:
                     self.enemies.add(pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks)))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
                 else:
                     self.enemies.add(pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.plantBlocks)))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot,self.direction)))
               
       
         self.enemies.update(self.width, self.height)
@@ -667,6 +717,9 @@ class Game(PygameGame):
         self.enemies.draw(screen)                                            
         self.createCoin(screen)
         self.createAnimalDisplay (screen)
+        
+        self.grass = pygame.sprite.Group (Grass (self.grassSlot[0] + 35, self.grassSlot[1] + 20))
+        self.grass.draw (screen)
         
         
         
