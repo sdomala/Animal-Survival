@@ -26,6 +26,7 @@ from Gorilla import Gorilla
 from Lion import Lion
 from Grass import Grass
 from Fruit import Fruit
+from Barn import Barn
 from pygamegame import PygameGame
 import random
 import math
@@ -86,10 +87,16 @@ class Game(PygameGame):
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)) 
         self.highlighted = (-1, -1)
         self.firstStep = 0
-        self.enemiesEating = 0
+        self.enemiesEatingGrass = 0
+        self.enemiesEatingFruit = 0
+        self.enemiesEatingBarn = 0
         self.grassHealth = 20
+        self.fruitHealth = 20
+        self.barnHealth = 20
         self.gameOver = False
-      
+        self.noBarn = False
+        self.noGrass = False
+        self.noFruit = False
       
 
 # Helper function that designates specific slot for grass
@@ -204,6 +211,63 @@ class Game(PygameGame):
             print ("we actually go to this line")
         
     
+# Helper function that designates specific slot for barn
+
+    def getBarn (self) :
+        found = False
+        while not found:
+            block = random.randint (0, len (self.plantBlocks) - 1)
+            up = True
+            down = True
+            right = True
+            left = True
+            yCoordinate = self.plantBlocks[block][0][1]
+            xCoordinate = self.plantBlocks[block][0][0]
+            for row in self.plantBlocks:
+                col = row [0]
+                # print (col)    
+                if (yCoordinate - self.stepY) == col[1] and xCoordinate == col[0] or (yCoordinate - self.stepY < self.firstMargin):
+                    # print ("up")
+                    up = False
+                if (yCoordinate + self.stepY) == col[1] and xCoordinate == col[0] or (yCoordinate + self.stepY) >= (self.height - self.endMargin):
+                    # print ("Down")
+                    down = False
+                if (xCoordinate + self.stepX) == col[0] and yCoordinate == col[1] or (xCoordinate + self.stepX) >= self.boxes[-1][-1][0] :
+                    # print ("right")
+                    right = False
+                if (xCoordinate - self.stepX == col [0]) and yCoordinate == col[1] or (xCoordinate - self.stepX < self.firstMargin) :
+                    # print ("left")
+                    left = False
+            
+        
+            if xCoordinate < self.width / 2 :
+                continue
+            if up:
+                self.direction = "up"
+                self.barnSlot = (xCoordinate, yCoordinate - self.stepY)
+                found = True
+            elif down:
+                self.direction = "down"
+                self.barnSlot = (xCoordinate, yCoordinate + self.stepY)
+                found = True
+        
+            elif left:
+                self.direction = "left"
+                self.barnSlot = (xCoordinate - self.stepX, yCoordinate)
+                found = True
+            elif right:
+                self.direction = "right"
+                self.barnSlot = (xCoordinate + self.stepX, yCoordinate)
+                found = True
+        
+            else:
+                continue
+            
+            if self.barnSlot == self.grassSlot or self.barnSlot == self.fruitSlot: #final check to see if slot is the same as grass slot
+                found = False
+                continue
+    
+    
 
 # Helper funcion that makes various grids
 
@@ -228,8 +292,10 @@ class Game(PygameGame):
         self.availableSlots = self.tempSlots
         self.getGrass()
         self.getFruit() 
+        self.getBarn()
         self.grass = pygame.sprite.Group (Grass (self.grassSlot[0] + 35, self.grassSlot[1] + 20))
         self.fruit = pygame.sprite.Group (Fruit (self.fruitSlot[0] + 35, self.fruitSlot[1] + 20))
+        self.barn = pygame.sprite.Group (Barn (self.barnSlot[0] + 35, self.barnSlot[1] + 20))
 
 
 # Helper function that creates overall grid
@@ -481,8 +547,34 @@ class Game(PygameGame):
 
     def timerFired(self, dt):
        
-        self.grassHealth -= (self.enemiesEating) * 0.001
-        if self.grassHealth <= 0 :
+        self.fruitHealth -= (self.enemiesEatingFruit) * 0.001
+        self.grassHealth -= (self.enemiesEatingGrass) * 0.001
+        self.barnHealth -= (self.enemiesEatingBarn) * 0.001
+        if self.grassHealth <= 0:
+            self.grass = []
+            self.grassSlot = (-200, -200)
+            for enemy in self.enemies:
+                if isinstance (enemy, Monster) :
+                    enemy.stopTheEnemy = False
+            self.noGrass = True
+        if self.fruitHealth <= 0:
+            self.fruit = []
+            self.fruitSlot = (-200, -200)
+            for enemy in self.enemies:
+                if isinstance (enemy, Zombie) :
+                    enemy.stopTheEnemy = False
+            self.noFruit = True
+        
+        if self.barnHealth <= 0 :
+            self.barn = []
+            self.barnSlot = (-200, -200)
+            for enemy in self.enemies:
+                if isinstance (enemy, Ghost) :
+                    enemy.stopTheEnemy = False
+            self.noBarn = True
+        
+        
+        if self.grassHealth <= 0 and self.fruitHealth <= 0 and self.barnHealth <= 0:
             self.gameOver = True
         
         
@@ -514,20 +606,21 @@ class Game(PygameGame):
             self.stopMoving = False #Increment level and allow movement again
             self.levelDisplay = True
             self.makeVariousGrids()
-            for animal in self.animals:
-                self.animals.remove(animal)
-                if isinstance (animal, Dog) :
-                    self.money += self.lionPrice
-                elif isinstance (animal, Goat) :
-                    self.money += self.goatPrice
-                elif isinstance (animal, Cow) :
-                    self.money += self.cowPrice
-                elif isinstance (animal, Alligator) :
-                    self.money += self.alligatorPrice
-                elif isinstance (animal, Gorilla) :
-                    self.money += self.gorillaPrice
-                else:
-                    self.money += self.lionPrice
+            if self.hasAnimal:
+                for animal in self.animals:
+                    self.animals.remove(animal)
+                    if isinstance (animal, Dog) :
+                        self.money += self.lionPrice
+                    elif isinstance (animal, Goat) :
+                        self.money += self.goatPrice
+                    elif isinstance (animal, Cow) :
+                        self.money += self.cowPrice
+                    elif isinstance (animal, Alligator) :
+                        self.money += self.alligatorPrice
+                    elif isinstance (animal, Gorilla) :
+                        self.money += self.gorillaPrice
+                    else:
+                        self.money += self.lionPrice
             
         # Generates the first enemy of each level here
         if self.enemies == [] :
@@ -703,18 +796,36 @@ class Game(PygameGame):
                     if enemy.health <= 0:
                         self.enemies.remove (enemy)
                         if enemy.stopTheEnemy:
-                            self.enemiesEating -= 1
+                            if isinstance (enemy, Monster) :
+                                self.enemiesEatingGrass -= 1
+                            elif isinstance (enemy, Zombie) :
+                                self.enemiesEatingFruit -= 1
+                            elif isinstance (enemy, Ghost) :
+                                self.enemiesEatingBarn -= 1
                         if isinstance (enemy, Monster) :
-                            self.money += 1
+                            self.money += 1 #Added to amount of money for every monster killed
                         elif isinstance (enemy, Zombie) :
                             self.money += 5
                         elif isinstance (enemy, Ghost) :
                             self.money += 10
                             
             for grass in self.grass:
-                if pygame.sprite.collide_mask (enemy, grass) :
-                    enemy.stopTheEnemy = True
-                    self.enemiesEating += 1
+                if isinstance (enemy, Monster) :
+                    if pygame.sprite.collide_mask (enemy, grass) :
+                        enemy.stopTheEnemy = True
+                        self.enemiesEatingGrass += 1
+                
+            for fruit in self.fruit:
+                if isinstance (enemy, Zombie) :
+                    if pygame.sprite.collide_mask (enemy, fruit) :
+                        enemy.stopTheEnemy = True
+                        self.enemiesEatingFruit += 1
+            
+            for barn in self.barn:
+                if isinstance (enemy, Ghost) :
+                    if pygame.sprite.collide_mask (enemy, barn) :
+                        enemy.stopTheEnemy = True
+                        self.enemiesEatingBarn += 1
 
     
 # Helper function that displays introduction screen
@@ -824,13 +935,19 @@ class Game(PygameGame):
                 reversed.append (revPoint)
             pygame.draw.lines (screen, self.black, False, reversed, 3)
             reversed = []
-        self.enemies.draw(screen)                                            
+                                                    
         self.createCoin(screen)
         self.createAnimalDisplay (screen)
         
-        self.grass.draw (screen)
-        self.fruit.draw (screen)
         
+        if not self.noGrass:
+            self.grass.draw (screen)
+        if not self.noFruit :
+            self.fruit.draw (screen)
+        if not self.noBarn :
+            self.barn.draw (screen)
+            
+        self.enemies.draw(screen)
         
         
 # Helper function that creates coin in bottom right corner
