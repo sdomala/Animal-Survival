@@ -76,7 +76,7 @@ class Game(PygameGame):
         self.cowPrice = 20
         self.alligatorPrice =50
         self.gorillaPrice = 75
-        self.lionPrice = 100
+        self.lionPrice = 1
         self.level = 0
         self.stopMoving = False
         self.weaponCounter = 0
@@ -97,6 +97,7 @@ class Game(PygameGame):
         self.noBarn = False
         self.noGrass = False
         self.noFruit = False
+        print (self.stepX, self.stepY)
       
 
 # Helper function that designates specific slot for grass
@@ -701,14 +702,22 @@ class Game(PygameGame):
       
         self.enemies.update(self.width, self.height)
         
+        if self.hasAnimal :
+            for animal in self.animals:
+                if isinstance (animal, Lion) :
+                    animal.update()
         
         if self.hasAnimal and self.weaponCounter % 47 == 0:
             for animal in self.animals:
-                if self.hasWeapon == False :
-                    self.createInitialWeapons(animal)
-                    self.hasWeapon = True
-                else: 
-                    self.createLaterWeapons (animal)
+                if isinstance (animal, Lion) :
+                    continue
+                else :
+                    if self.hasWeapon == False :
+                        self.createInitialWeapons(animal)
+                        self.hasWeapon = True
+                    else: 
+                        self.createLaterWeapons (animal)
+                
         if self.hasWeapon:
             self.weapons.update ()
         self.updateCollisions() 
@@ -745,8 +754,8 @@ class Game(PygameGame):
             self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 0, 3)))
             self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 3, 0))) 
             self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, -3, 0)))
-        else :
-            self.moveLion (animal)
+        # else :
+        #     self.moveLion (animal)
     
 # Helper function for creating initial weapons
 
@@ -780,8 +789,8 @@ class Game(PygameGame):
             self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 0, 3)))
             self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, 3, 0))) 
             self.weapons.add (pygame.sprite.Group(Banana(animal.x, animal.y, -3, 0)))
-        else :
-            self.moveLion (animal)
+        # else :
+        #     self.moveLion (animal, 
     
     
 # Helper function that checks for collisions and updates the health/existence
@@ -808,6 +817,28 @@ class Game(PygameGame):
                             self.money += 5
                         elif isinstance (enemy, Ghost) :
                             self.money += 10
+            if self.hasAnimal:
+                for animal in self.animals:
+                    if isinstance (animal, Lion) :
+                        if pygame.sprite.collide_mask (enemy, animal) :
+                            enemy.health -= animal.damage 
+                            if enemy.health <= 0:
+                                self.enemies.remove (enemy)
+                                if enemy.stopTheEnemy:
+                                    if isinstance (enemy, Monster) :
+                                        self.enemiesEatingGrass -= 1
+                                    elif isinstance (enemy, Zombie) :
+                                        self.enemiesEatingFruit -= 1
+                                    elif isinstance (enemy, Ghost) :
+                                        self.enemiesEatingBarn -= 1
+                                if isinstance (enemy, Monster) :
+                                    self.money += 1 #Added to amount of money for every monster killed
+                                elif isinstance (enemy, Zombie) :
+                                    self.money += 5
+                                elif isinstance (enemy, Ghost) :
+                                    self.money += 10
+            
+            
                             
             for grass in self.grass:
                 if isinstance (enemy, Monster) :
