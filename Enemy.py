@@ -13,7 +13,7 @@ import math
 class Enemy(pygame.sprite.Sprite):
 
 # Constructor method that initializes monster image, location, and speed
-    def __init__(self, x, y, rows, cols, margin, width, height, stepY, plantBlocks):
+    def __init__(self, x, y, rows, cols, margin, width, height, stepY, stepX, plantBlocks, grassSlot, direction):
         super(Enemy, self).__init__()
         self.x, self.y = x, y
         self.xSpeed = 1
@@ -32,6 +32,10 @@ class Enemy(pygame.sprite.Sprite):
         self.index = 0
         self.plantBlocks = plantBlocks
         self.health = 20
+        self.grassSlot = grassSlot
+        self.stepY = stepY
+        self.stepX = stepX
+        self.direction = direction
         
       
 
@@ -43,9 +47,29 @@ class Enemy(pygame.sprite.Sprite):
                                 self.width, self.height)
 
 
+
+# Helper function that checks if the enemy is at the grass, given the direction
+
+    def atGrass (self) :
+        
+        if self.direction == "up" :
+            if self.y <= (self.grassSlot[1] + self.stepY * (1.5)) :
+                if self.x == (self.grassSlot[0] + self.stepX/2) :
+                    return True
+                    
+        elif directio
+            
+            
+    
+
+
+
 # Method that updates the x and y values of the object
 
     def update(self, screenWidth, screenHeight):
+        
+        if self.atGrass () :
+            return
         
         if self.index == (len (self.plantBlocks) -1) : #Checks if at last block
             self.x += self.xSpeed
@@ -110,6 +134,3 @@ class Enemy(pygame.sprite.Sprite):
                 return True
         return False
 
-
-
-# first = Enemy (20, 20, 20, 20, 20, 20, 20, 20)
