@@ -9,8 +9,8 @@ from Enemy import *
 # Monster class that inherits all Enemy properties/methods
 
 class Monster (Enemy) :
-    def __init__(self, x, y, rows, cols, margin, width, height, stepY, plantBlocks):
-        super().__init__ (x, y, rows, cols, margin, width, height, stepY, plantBlocks)
+    def __init__(self, x, y, rows, cols, margin, width, height, stepY, plantBlocks, grassSlot, direction):
+        super().__init__ (x, y, rows, cols, margin, width, height, stepY, stepX, plantBlocks, grassSlot, direction)
        
        
        
