@@ -87,6 +87,9 @@ class Game(PygameGame):
         self.highlighted = (-1, -1)
         self.firstStep = 0
         self.grass = pygame.sprite.Group (Grass (self.grassSlot[0] + 35, self.grassSlot[1] + 20))
+        self.enemiesEating = 0
+        self.grassHealth = 20
+        self.gameOver = False
       
       
 
@@ -125,12 +128,6 @@ class Game(PygameGame):
         elif down:
             self.direction = "down"
             self.grassSlot = (xCoordinate, yCoordinate + self.stepY)
-        elif right:
-            self.direction = "right"
-            self.grassSlot = (xCoordinate + self.stepX, yCoordinate)
-        elif left:
-            self.direction = "left"
-            self.grassSlot = (xCoordinate - self.stepX, yCoordinate) 
         else:
             self.getGrass()
             
@@ -409,6 +406,12 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
+        self.grassHealth -= (self.enemiesEating) * 0.003
+        if self.grassHealth <= 0 :
+            self.gameOver = True
+        
+        
+        
         if self.level == 0 or self.levelDisplay: #Doesn't increment various counters and create/move objects 
             return
         self.deleteEnemies()
@@ -633,9 +636,8 @@ class Game(PygameGame):
                             
             for grass in self.grass:
                 if pygame.sprite.collide_mask (enemy, grass) :
-                    print ("You're over here")
-                else :
-                    print ("no collision")
+                    enemy.stopTheEnemy = True
+                    self.enemiesEating += 1
 
     
 # Helper function that displays introduction screen
@@ -654,6 +656,19 @@ class Game(PygameGame):
         myfont = pygame.font.SysFont ('Comic Sans MS', 50)
         textsurface3 = myfont.render ("Go!", False, (0,0,0))
         screen.blit (textsurface3, (self.width/2 - 32, self.height/2 + 107))
+        
+    
+# Helper function that displays game over screen
+
+    def gameOverScreen (self, screen) :
+        screen.fill (self.black) 
+        pygame.font.init() 
+        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        textsurface = myfont.render("Game Over!", False, (255,255,255))
+        screen.blit(textsurface,(self.width/2 - 70, self.height/2 - 100))
+        
+        textsurface2 = myfont.render ("Press Spacebar to Try Again", False, (255, 255, 255))
+        screen.blit (textsurface2, (self.width/2 - 170, self.height/2 + 100))
 
 
 
@@ -666,7 +681,7 @@ class Game(PygameGame):
         textsurface = myfont.render("Welcome to Level " + str (self.level) + "!", False, (255,255,255))
         screen.blit(textsurface,(self.width/2 - 135, self.height/2 - 100))
         
-        textsurface2 = myfont.render ("Press spacebar to continue", False, (255, 255, 255))
+        textsurface2 = myfont.render ("Press Space Bar to Continue", False, (255, 255, 255))
         screen.blit (textsurface2, (self.width/2 - 170, self.height/2 + 100))
         
         
@@ -677,9 +692,20 @@ class Game(PygameGame):
             if self.levelDisplay:
                 self.levelDisplay = False
                 self.weaponCounter -= 1
+            
+            elif self.gameOver :
+                self.gameOver = False
+                self.init() 
+                
+            
                 
 # View function that first generates grid and then the monsters
     def redrawAll(self, screen):
+        
+        if self.gameOver:
+            self.gameOverScreen (screen)
+            return
+        
         if self.level == 0:
             self.createInitialScreen (screen)
             return
