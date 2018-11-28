@@ -18,4 +18,4 @@ class Ghost (Enemy) :
         self.image = pygame.image.load ('Ghost.png').convert_alpha()        
         self.width = self.image.get_width()
         self.height = self.image.get_height()
-        self.health = 100
+        self.health = 160
