@@ -69,7 +69,6 @@ class Game(PygameGame):
         self.type = "dog"
         
         self.makeVariousGrids() 
-        self.getGrass()
         self.dogPrice = 5
         self.goatPrice = 10
         self.cowPrice = 20
@@ -86,7 +85,6 @@ class Game(PygameGame):
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)) 
         self.highlighted = (-1, -1)
         self.firstStep = 0
-        self.grass = pygame.sprite.Group (Grass (self.grassSlot[0] + 35, self.grassSlot[1] + 20))
         self.enemiesEating = 0
         self.grassHealth = 20
         self.gameOver = False
@@ -96,14 +94,17 @@ class Game(PygameGame):
 # Helper function that designates specific slot for grass
 
     def getGrass (self) :
-        block = random.randint (0, len (self.plantBlocks) - 1)
-        up = True
-        down = True
-        right = True
-        left = True
-        yCoordinate = self.plantBlocks[block][0][1]
-        xCoordinate = self.plantBlocks[block][0][0]
-        for row in self.plantBlocks:
+        found = False
+        while not found:
+            print ("executing")
+            block = random.randint (0, len (self.plantBlocks) - 1)
+            up = True
+            down = True
+            right = True
+            left = True
+            yCoordinate = self.plantBlocks[block][0][1]
+            xCoordinate = self.plantBlocks[block][0][0]
+            for row in self.plantBlocks:
                 col = row [0]
                 # print (col)    
                 if (yCoordinate - self.stepY) == col[1] and xCoordinate == col[0] or (yCoordinate - self.stepY < self.firstMargin):
@@ -120,16 +121,35 @@ class Game(PygameGame):
                     left = False
         
         
-        # print (block, xCoordinate, yCoordinate) 
-        # print (self.plantBlocks)
-        if up:
-            self.direction = "up"
-            self.grassSlot = (xCoordinate, yCoordinate - self.stepY)
-        elif down:
-            self.direction = "down"
-            self.grassSlot = (xCoordinate, yCoordinate + self.stepY)
-        else:
-            self.getGrass()
+            print (block, xCoordinate, yCoordinate) 
+            
+        
+            if xCoordinate < self.width / 2 :
+                continue
+            if up:
+                self.direction = "up"
+                self.grassSlot = (xCoordinate, yCoordinate - self.stepY)
+                print ("result", self.grassSlot)
+                found = True
+            elif down:
+                self.direction = "down"
+                self.grassSlot = (xCoordinate, yCoordinate + self.stepY)
+                print ("result", self.grassSlot)
+                found = True
+        
+            elif left:
+                self.direction = "left"
+                self.grassSlot = (xCoordinate - self.stepX, yCoordinate)
+                print ("result", self.grassSlot)
+                found = True
+            elif right:
+                self.direction = "right"
+                self.grassSlot = (xCoordinate + self.stepX, yCoordinate)
+                print ("result", self.grassSlot)
+                found = True
+        
+            else:
+                continue
             
         
         
@@ -156,6 +176,8 @@ class Game(PygameGame):
                     if col == plantRow[0]:
                         self.tempSlots[row].remove (col)
         self.availableSlots = self.tempSlots
+        self.getGrass()
+        self.grass = pygame.sprite.Group (Grass (self.grassSlot[0] + 35, self.grassSlot[1] + 20))
 
 
 # Helper function that creates overall grid
@@ -406,7 +428,8 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
-        self.grassHealth -= (self.enemiesEating) * 0.003
+        print (self.grassSlot)
+        self.grassHealth -= (self.enemiesEating) * 0.001
         if self.grassHealth <= 0 :
             self.gameOver = True
         
