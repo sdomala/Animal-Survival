@@ -25,6 +25,7 @@ from Alligator import Alligator
 from Gorilla import Gorilla
 from Lion import Lion
 from Grass import Grass
+from Fruit import Fruit
 from pygamegame import PygameGame
 import random
 import math
@@ -96,7 +97,6 @@ class Game(PygameGame):
     def getGrass (self) :
         found = False
         while not found:
-            print ("executing")
             block = random.randint (0, len (self.plantBlocks) - 1)
             up = True
             down = True
@@ -119,9 +119,6 @@ class Game(PygameGame):
                 if (xCoordinate - self.stepX == col [0]) and yCoordinate == col[1] or (xCoordinate - self.stepX < self.firstMargin) :
                     # print ("left")
                     left = False
-        
-        
-            print (block, xCoordinate, yCoordinate) 
             
         
             if xCoordinate < self.width / 2 :
@@ -129,29 +126,82 @@ class Game(PygameGame):
             if up:
                 self.direction = "up"
                 self.grassSlot = (xCoordinate, yCoordinate - self.stepY)
-                print ("result", self.grassSlot)
                 found = True
             elif down:
                 self.direction = "down"
                 self.grassSlot = (xCoordinate, yCoordinate + self.stepY)
-                print ("result", self.grassSlot)
                 found = True
         
             elif left:
                 self.direction = "left"
                 self.grassSlot = (xCoordinate - self.stepX, yCoordinate)
-                print ("result", self.grassSlot)
                 found = True
             elif right:
                 self.direction = "right"
                 self.grassSlot = (xCoordinate + self.stepX, yCoordinate)
-                print ("result", self.grassSlot)
                 found = True
         
             else:
                 continue
             
+
+# Helper function that designates specific slot for fruit
+
+    def getFruit (self) :
+        found = False
+        while not found:
+            block = random.randint (0, len (self.plantBlocks) - 1)
+            up = True
+            down = True
+            right = True
+            left = True
+            yCoordinate = self.plantBlocks[block][0][1]
+            xCoordinate = self.plantBlocks[block][0][0]
+            for row in self.plantBlocks:
+                col = row [0]
+                # print (col)    
+                if (yCoordinate - self.stepY) == col[1] and xCoordinate == col[0] or (yCoordinate - self.stepY < self.firstMargin):
+                    # print ("up")
+                    up = False
+                if (yCoordinate + self.stepY) == col[1] and xCoordinate == col[0] or (yCoordinate + self.stepY) >= (self.height - self.endMargin):
+                    # print ("Down")
+                    down = False
+                if (xCoordinate + self.stepX) == col[0] and yCoordinate == col[1] or (xCoordinate + self.stepX) >= self.boxes[-1][-1][0] :
+                    # print ("right")
+                    right = False
+                if (xCoordinate - self.stepX == col [0]) and yCoordinate == col[1] or (xCoordinate - self.stepX < self.firstMargin) :
+                    # print ("left")
+                    left = False
+            
         
+            if xCoordinate < self.width / 2 :
+                continue
+            if up:
+                self.direction = "up"
+                self.fruitSlot = (xCoordinate, yCoordinate - self.stepY)
+                found = True
+            elif down:
+                self.direction = "down"
+                self.fruitSlot = (xCoordinate, yCoordinate + self.stepY)
+                found = True
+        
+            elif left:
+                self.direction = "left"
+                self.fruitSlot = (xCoordinate - self.stepX, yCoordinate)
+                found = True
+            elif right:
+                self.direction = "right"
+                self.fruitSlot = (xCoordinate + self.stepX, yCoordinate)
+                found = True
+        
+            else:
+                continue
+            
+            if self.fruitSlot == self.grassSlot: #final check to see if slot is the same as grass slot
+                found = False
+                continue
+            
+            print ("we actually go to this line")
         
     
 
@@ -177,7 +227,9 @@ class Game(PygameGame):
                         self.tempSlots[row].remove (col)
         self.availableSlots = self.tempSlots
         self.getGrass()
+        self.getFruit() 
         self.grass = pygame.sprite.Group (Grass (self.grassSlot[0] + 35, self.grassSlot[1] + 20))
+        self.fruit = pygame.sprite.Group (Fruit (self.fruitSlot[0] + 35, self.fruitSlot[1] + 20))
 
 
 # Helper function that creates overall grid
@@ -428,7 +480,7 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
-        print (self.grassSlot)
+       
         self.grassHealth -= (self.enemiesEating) * 0.001
         if self.grassHealth <= 0 :
             self.gameOver = True
@@ -650,6 +702,8 @@ class Game(PygameGame):
                     self.weapons.remove (weapon)
                     if enemy.health <= 0:
                         self.enemies.remove (enemy)
+                        if enemy.stopTheEnemy:
+                            self.enemiesEating -= 1
                         if isinstance (enemy, Monster) :
                             self.money += 1
                         elif isinstance (enemy, Zombie) :
@@ -775,6 +829,7 @@ class Game(PygameGame):
         self.createAnimalDisplay (screen)
         
         self.grass.draw (screen)
+        self.fruit.draw (screen)
         
         
         
