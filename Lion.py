@@ -25,8 +25,36 @@ class Lion(Animal):
         self.height = self.image.get_height()
         self.rect = pygame.Rect(self.x - self.width//2, self.y - self.height//2,
                                 self.width, self.height)
+        self.originalX = self.x 
+        self.originalY = self.y 
+        self.direction = "right"
+        self.damage = 1
                     
        
+    
+    
+    def update (self) :
+        if self.direction == "right" :
+            self.x += 3
+            if self.x > (self.originalX + 72) : #72 is width of each block
+                self.direction = "up" 
+        
+        elif self.direction == "up" :
+            self.y -= 3
+            if self.y < (self.originalY - 55) :
+                self.direction = "left" 
+        
+        elif self.direction == "left" :
+            self.x -= 3
+            if self.x < (self.originalX - 72) :
+                self.direction = "down"
+        
+        else :
+            self.y  += 3
+            if self. y > (self.originalY + 55) :
+                self.direction = "right"
+        self.getRect()
+        
     
 
 # Method that re-stores the x and y coordinates and the width and height of 
