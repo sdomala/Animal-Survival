@@ -4,6 +4,9 @@
 # Section: O
 # Last modified 11/25/18
 
+# Citation: Got image from
+# https://www.freeiconspng.com/img/3826
+
 import pygame
 import random
 import math
