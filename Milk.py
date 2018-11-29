@@ -20,7 +20,7 @@ class Milk(Weapon):
 # Constructor method that initializes horn damage, position, and speed
     def __init__(self, x, y, xSpeed, ySpeed):
         super().__init__ (x, y, xSpeed, ySpeed)
-        self.damage = 16
+        self.damage = 12
         self.image = pygame.image.load ('Milk.png').convert_alpha()        
         self.width = self.image.get_width()
         self.height = self.image.get_height()
