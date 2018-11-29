@@ -4,6 +4,9 @@
 # Section: O
 # Last modified 11/27/18
 
+# Citation: Got image from
+# https://www.clipartmax.com/middle/m2i8H7K9H7K9i8i8_grass-clipart-transparent-clipart-grass-transparent-background/
+
 import pygame
 import random
 import math
