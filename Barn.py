@@ -4,6 +4,9 @@
 # Section: O
 # Last modified 11/28/18
 
+# Citation: Got image from
+# https://www.pinterest.com/pin/380343131003261591/?lp=true
+
 import pygame
 import random
 import math
