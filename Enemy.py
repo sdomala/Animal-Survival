@@ -4,6 +4,9 @@
 # Section: O
 # Last modified 11/23/18
 
+# Citation: Got image from
+# https://techflourish.com/categories/halloween-zombie-clipart.html
+
 import pygame
 import random
 import math
@@ -31,7 +34,7 @@ class Enemy(pygame.sprite.Sprite):
                       # places where enemies change direction
         self.index = 0
         self.plantBlocks = plantBlocks
-        self.health = 20
+        self.health = 25
         self.grassSlot = grassSlot
         self.stepY = stepY
         self.stepX = stepX
