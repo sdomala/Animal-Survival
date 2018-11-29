@@ -2,7 +2,7 @@
 # Name: Saisiddarth Domala
 # andrewID: sdomala
 # Section: O
-# Last modified 11/20/18
+# Last modified 11/28/18
 
 # Citation: Got this starter class from Pygame manual from 112 website
 # Created by Lukas Peraza
@@ -78,9 +78,9 @@ class Game(PygameGame):
         self.dogPrice = 5
         self.goatPrice = 10
         self.cowPrice = 20
-        self.alligatorPrice =50
-        self.gorillaPrice = 75
-        self.lionPrice = 100
+        self.alligatorPrice =70
+        self.gorillaPrice = 150
+        self.lionPrice = 200
         self.level = 0
         self.stopMoving = False
         self.weaponCounter = 0
@@ -101,7 +101,7 @@ class Game(PygameGame):
         self.noBarn = False
         self.noGrass = False
         self.noFruit = False
-        print (self.stepX, self.stepY)
+        
       
 
 # Helper function that designates specific slot for grass
@@ -213,7 +213,7 @@ class Game(PygameGame):
                 found = False
                 continue
             
-            print ("we actually go to this line")
+            
         
     
 # Helper function that designates specific slot for barn
@@ -535,6 +535,7 @@ class Game(PygameGame):
         for enemy in self.enemies:
             if enemy.x > (self.boxes[-1][-1][0]) :
                 self.enemies.remove (enemy)
+                
 
            
         
@@ -546,6 +547,7 @@ class Game(PygameGame):
         for weapon in self.weapons :
             if weapon.x > self.boxes[-1][-1][0] or weapon.x < self.firstMargin or weapon.y < self.firstMargin or weapon.y > self.boxes[-1][-1][1] :
                 self.weapons.remove (weapon)
+                
      
 
 # Called approximately every 20 milliseconds and updates position of enemies
@@ -1017,7 +1019,7 @@ class Game(PygameGame):
         screen.blit (alligator, (6 * self.firstMargin + 60-15, self.height - 0.2 * self.endMargin-17))
         
         gorilla = myfont.render (str (self.gorillaPrice), False, (0,0,0))
-        screen.blit (gorilla, (24 * self.firstMargin + 60-15, self.height - 0.2 * self.endMargin-17))
+        screen.blit (gorilla, (24 * self.firstMargin + 60-22, self.height - 0.2 * self.endMargin-17))
         
         lion = myfont.render (str (self.lionPrice), False, (0,0,0))
         screen.blit (lion, (42 * self.firstMargin + 60-22, self.height - 0.2 * self.endMargin-17))
