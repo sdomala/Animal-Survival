@@ -4,6 +4,9 @@
 # Section: O
 # Last modified 11/23/18
 
+# Citation: Got image from
+# https://techflourish.com/categories/dog-bone-clipart-transparent-background.html
+
 import pygame
 import random
 import math
