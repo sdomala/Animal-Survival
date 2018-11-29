@@ -4,6 +4,9 @@
 # Section: O
 # Last modified 11/23/18
 
+# Citation: Got image from
+# http://pluspng.com/animated-dog-png-9194.html
+
 import pygame
 import random
 import math
