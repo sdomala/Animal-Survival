@@ -28,7 +28,7 @@ class Lion(Animal):
         self.originalX = self.x 
         self.originalY = self.y 
         self.direction = "right"
-        self.damage = 3
+        self.damage = 2.4
                     
        
     
