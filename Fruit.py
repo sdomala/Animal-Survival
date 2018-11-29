@@ -4,6 +4,9 @@
 # Section: O
 # Last modified 11/27/18
 
+# Citation: Got image from
+# http://clipart-library.com/transparent-fruit-cliparts.html
+
 import pygame
 import random
 import math
