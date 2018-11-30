@@ -101,6 +101,8 @@ class Game(PygameGame):
         self.noBarn = False
         self.noGrass = False
         self.noFruit = False
+        self.damage = 0
+        self.pownage = False
         
       
 
@@ -553,7 +555,7 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
-       
+        print (self.money)
         self.fruitHealth -= (self.enemiesEatingFruit) * 0.001
         self.grassHealth -= (self.enemiesEatingGrass) * 0.001
         self.barnHealth -= (self.enemiesEatingBarn) * 0.001
@@ -617,17 +619,23 @@ class Game(PygameGame):
                 for animal in self.animals:
                     self.animals.remove(animal)
                     if isinstance (animal, Dog) :
-                        self.money += self.lionPrice
+                        self.money += self.dogPrice
+                        print ("dog")
                     elif isinstance (animal, Goat) :
                         self.money += self.goatPrice
+                        print ("goat")
                     elif isinstance (animal, Cow) :
                         self.money += self.cowPrice
+                        print ("cow")
                     elif isinstance (animal, Alligator) :
                         self.money += self.alligatorPrice
+                        print ("alligator")
                     elif isinstance (animal, Gorilla) :
                         self.money += self.gorillaPrice
+                        print ("gorilla")
                     else:
                         self.money += self.lionPrice
+                        print ("lion")
             
         # Generates the first enemy of each level here
         if self.enemies == [] :
@@ -727,7 +735,11 @@ class Game(PygameGame):
         if self.hasWeapon:
             self.weapons.update ()
         self.updateCollisions() 
-
+        
+        if self.counter % 47 == 0:
+            if self.pownage == True:
+                self.pownage = False
+        
 # Helper function for creating later weapons
 
     def createLaterWeapons (self, animal) :
@@ -807,8 +819,10 @@ class Game(PygameGame):
             for weapon in self.weapons:
                 if pygame.sprite.collide_mask (weapon, enemy) :
                     enemy.health -= weapon.damage
+                    self.damage = (weapon.damage, weapon)
                     self.weapons.remove (weapon)
                     if enemy.health <= 0:
+                        self.pownage = True
                         self.enemies.remove (enemy)
                         if enemy.stopTheEnemy:
                             if isinstance (enemy, Monster) :
@@ -819,31 +833,34 @@ class Game(PygameGame):
                                 self.enemiesEatingBarn -= 1
                         if isinstance (enemy, Monster) :
                             self.money += 1 #Added to amount of money for every monster killed
+                            print ("here")
                         elif isinstance (enemy, Zombie) :
                             self.money += 5
+                            print ("here")
                         elif isinstance (enemy, Ghost) :
                             self.money += 10
-            if self.hasAnimal:
-                for animal in self.animals:
-                    if isinstance (animal, Lion) :
-                        if pygame.sprite.collide_mask (enemy, animal) :
-                            enemy.health -= animal.damage 
-                            if enemy.health <= 0:
-                                self.enemies.remove (enemy)
-                                if enemy.stopTheEnemy:
-                                    if isinstance (enemy, Monster) :
-                                        self.enemiesEatingGrass -= 1
-                                    elif isinstance (enemy, Zombie) :
-                                        self.enemiesEatingFruit -= 1
-                                    elif isinstance (enemy, Ghost) :
-                                        self.enemiesEatingBarn -= 1
-                                if isinstance (enemy, Monster) :
-                                    self.money += 1 #Added to amount of money for every monster killed
-                                elif isinstance (enemy, Zombie) :
-                                    self.money += 5
-                                elif isinstance (enemy, Ghost) :
-                                    self.money += 10
-            
+                            print ("here")
+            # if self.hasAnimal:
+            #     for animal in self.animals:
+            #         if isinstance (animal, Lion) :
+            #             if pygame.sprite.collide_mask (enemy, animal) :
+            #                 enemy.health -= animal.damage 
+            #                 if enemy.health <= 0:
+            #                     self.enemies.remove (enemy)
+            #                     if enemy.stopTheEnemy:
+            #                         if isinstance (enemy, Monster) :
+            #                             self.enemiesEatingGrass -= 1
+            #                         elif isinstance (enemy, Zombie) :
+            #                             self.enemiesEatingFruit -= 1
+            #                         elif isinstance (enemy, Ghost) :
+            #                             self.enemiesEatingBarn -= 1
+            #                     if isinstance (enemy, Monster) :
+            #                         self.money += 1 #Added to amount of money for every monster killed
+            #                     elif isinstance (enemy, Zombie) :
+            #                         self.money += 5
+            #                     elif isinstance (enemy, Ghost) :
+            #                         self.money += 10
+            # 
             
                             
             for grass in self.grass:
@@ -1023,6 +1040,15 @@ class Game(PygameGame):
         
         lion = myfont.render (str (self.lionPrice), False, (0,0,0))
         screen.blit (lion, (42 * self.firstMargin + 60-22, self.height - 0.2 * self.endMargin-17))
+        
+        # self.damage
+        # self.pownage
+        value = self.damage[1].damage
+        outputValue = myfont.render ( str (value), False, (0,0,0))
+        if self.damage[1] == :
+            screen.blit (outputValue, (6 * self.firstMargin + 100, self.height - 0.75 * self.endMargin)) #Important code here
+        elif damage == :
+            screen.blit (damage, )
         
         
 
