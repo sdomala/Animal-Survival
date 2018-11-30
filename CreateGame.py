@@ -103,6 +103,7 @@ class Game(PygameGame):
         self.noFruit = False
         self.damage = 0
         self.pownage = False
+        self.typeDisplay = None
         
       
 
@@ -555,7 +556,7 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
-        print (self.money)
+        print (self.typeDisplay)
         self.fruitHealth -= (self.enemiesEatingFruit) * 0.001
         self.grassHealth -= (self.enemiesEatingGrass) * 0.001
         self.barnHealth -= (self.enemiesEatingBarn) * 0.001
@@ -620,22 +621,22 @@ class Game(PygameGame):
                     self.animals.remove(animal)
                     if isinstance (animal, Dog) :
                         self.money += self.dogPrice
-                        print ("dog")
+                      
                     elif isinstance (animal, Goat) :
                         self.money += self.goatPrice
-                        print ("goat")
+                       
                     elif isinstance (animal, Cow) :
                         self.money += self.cowPrice
-                        print ("cow")
+                      
                     elif isinstance (animal, Alligator) :
                         self.money += self.alligatorPrice
-                        print ("alligator")
+                        
                     elif isinstance (animal, Gorilla) :
                         self.money += self.gorillaPrice
-                        print ("gorilla")
+                    
                     else:
                         self.money += self.lionPrice
-                        print ("lion")
+                        
             
         # Generates the first enemy of each level here
         if self.enemies == [] :
@@ -819,7 +820,22 @@ class Game(PygameGame):
             for weapon in self.weapons:
                 if pygame.sprite.collide_mask (weapon, enemy) :
                     enemy.health -= weapon.damage
-                    self.damage = (weapon.damage, weapon)
+                    self.damage = weapon.damage
+                    
+                    
+                    if isinstance (weapon, Bone) :
+                        self.typeDisplay = "bone"
+                    elif isinstance (weapon, Horn) :
+                        self.typeDisplay = "horn" 
+                    elif isinstance (weapon, Milk) :
+                        self.typeDisplay = "milk"
+                    elif isinstance (weapon, Water) :
+                        self.typeDisplay = "water"
+                    elif isinstance (weapon, Banana) :
+                        self.typeDisplay = "banana"
+                    
+                    
+                    
                     self.weapons.remove (weapon)
                     if enemy.health <= 0:
                         self.pownage = True
@@ -833,13 +849,13 @@ class Game(PygameGame):
                                 self.enemiesEatingBarn -= 1
                         if isinstance (enemy, Monster) :
                             self.money += 1 #Added to amount of money for every monster killed
-                            print ("here")
+                
                         elif isinstance (enemy, Zombie) :
                             self.money += 5
-                            print ("here")
+                      
                         elif isinstance (enemy, Ghost) :
                             self.money += 10
-                            print ("here")
+                   
             # if self.hasAnimal:
             #     for animal in self.animals:
             #         if isinstance (animal, Lion) :
@@ -1043,13 +1059,13 @@ class Game(PygameGame):
         
         # self.damage
         # self.pownage
-        value = self.damage[1].damage
-        outputValue = myfont.render ( str (value), False, (0,0,0))
-        if self.damage[1] == :
-            screen.blit (outputValue, (6 * self.firstMargin + 100, self.height - 0.75 * self.endMargin)) #Important code here
-        elif damage == :
-            screen.blit (damage, )
         
+        damage = myfont.render ( str (self.damage), False, (0,0,0))
+        if self.typeDisplay == "bone":
+            screen.blit (outputValue, (6 * self.firstMargin + 100, self.height - 0.75 * self.endMargin)) 
+            
+        elif
+       
         
 
 # Helper function that displays animals and prices at the bottom of the screen
