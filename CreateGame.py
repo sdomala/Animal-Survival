@@ -1057,15 +1057,21 @@ class Game(PygameGame):
         lion = myfont.render (str (self.lionPrice), False, (0,0,0))
         screen.blit (lion, (42 * self.firstMargin + 60-22, self.height - 0.2 * self.endMargin-17))
         
-        # self.damage
+  
         # self.pownage
         
         damage = myfont.render ( str (self.damage), False, (0,0,0))
         if self.typeDisplay == "bone":
-            screen.blit (outputValue, (6 * self.firstMargin + 100, self.height - 0.75 * self.endMargin)) 
+            screen.blit (damage, (6 * self.firstMargin + 60 - 15 + 48, self.height - 0.75 * self.endMargin - 15)) 
             
-        elif
-       
+        elif self.typeDisplay == "horn":
+            screen.blit (damage, (24 * self.firstMargin + 60 -15 + 48, self.height - 0.75 * self.endMargin -17 - 15))
+        elif self.typeDisplay == "milk" :
+            screen.blit (damage, (42 * self.firstMargin + 60 - 15 + 48, self.height - 0.75 * self.endMargin - 17 - 15))
+        elif self.typeDisplay == "water" :
+            screen.blit (damage, (6 * self.firstMargin + 60-15 + 48, self.height - 0.2 * self.endMargin-17-15))
+        elif self.typeDisplay == "banana":
+            screen.blit (damage, (24 * self.firstMargin + 60-22 + 48, self.height - 0.2 * self.endMargin-17-15))
         
 
 # Helper function that displays animals and prices at the bottom of the screen
