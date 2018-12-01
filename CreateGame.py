@@ -76,10 +76,10 @@ class Game(PygameGame):
         
         self.makeVariousGrids() 
         self.dogPrice = 5
-        self.goatPrice = 10
-        self.cowPrice = 20
-        self.alligatorPrice =70
-        self.gorillaPrice = 150
+        self.goatPrice = 1#10
+        self.cowPrice = 1#20
+        self.alligatorPrice =1#70
+        self.gorillaPrice = 1#150
         self.lionPrice = 200
         self.level = 0
         self.stopMoving = False
@@ -556,10 +556,10 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
-        print (self.typeDisplay)
-        self.fruitHealth -= (self.enemiesEatingFruit) * 0.001
-        self.grassHealth -= (self.enemiesEatingGrass) * 0.001
-        self.barnHealth -= (self.enemiesEatingBarn) * 0.001
+    
+        self.fruitHealth -= (self.enemiesEatingFruit) * 0.0003
+        self.grassHealth -= (self.enemiesEatingGrass) * 0.0003
+        self.barnHealth -= (self.enemiesEatingBarn) * 0.0003
         if self.grassHealth <= 0:
             self.grass = []
             self.grassSlot = (-200, -200)
@@ -740,6 +740,7 @@ class Game(PygameGame):
         if self.counter % 47 == 0:
             if self.pownage == True:
                 self.pownage = False
+            self.damage = None
         
 # Helper function for creating later weapons
 
@@ -934,7 +935,7 @@ class Game(PygameGame):
 
     def displayNextLevel (self, screen) :
         screen.fill (self.black) 
-        pygame.font.init() 
+        # pygame.font.init() 
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
         textsurface = myfont.render("Welcome to Level " + str (self.level) + "!", False, (255,255,255))
         screen.blit(textsurface,(self.width/2 - 135, self.height/2 - 100))
@@ -1007,8 +1008,7 @@ class Game(PygameGame):
             reversed = []
                                                     
         
-        self.createAnimalDisplay (screen)
-        self.createCoin(screen)
+        
         
         if not self.noGrass:
             self.grass.draw (screen)
@@ -1016,6 +1016,9 @@ class Game(PygameGame):
             self.fruit.draw (screen)
         if not self.noBarn :
             self.barn.draw (screen)
+          
+        self.createAnimalDisplay (screen)
+        self.createCoin(screen)
             
         self.enemies.draw(screen)
         
@@ -1026,7 +1029,7 @@ class Game(PygameGame):
         self.coin = pygame.sprite.Group(Coin(self.width - 5 * self.firstMargin,\
                                             self.height - 0.5 * self.endMargin))
         self.coin.draw (screen)
-        pygame.font.init() 
+        # pygame.font.init() 
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
         textsurface = myfont.render(str (self.money), False, (0, 0, 0))
         length = len (str (self.money))
@@ -1057,22 +1060,37 @@ class Game(PygameGame):
         lion = myfont.render (str (self.lionPrice), False, (0,0,0))
         screen.blit (lion, (42 * self.firstMargin + 60-22, self.height - 0.2 * self.endMargin-17))
         
-  
-        # self.pownage
+    
+        myfont = pygame.font.SysFont ("Comic Sans MS", 30) 
+        myfont.set_bold (True)
+        displayGrassHealth = myfont.render (str (int(self.grassHealth)), False, (0,0,204))
+        screen.blit (displayGrassHealth, (self.grassSlot[0] + 17, self.grassSlot[1]))
         
-        damage = myfont.render ( str (self.damage), False, (0,0,0))
+        displayFruitHealth = myfont.render (str (int (self.fruitHealth)), False, (0,0,204))
+        screen.blit (displayFruitHealth, (self.fruitSlot[0] + 17, self.fruitSlot[1]))
+        
+        displayBarnHealth = myfont.render (str (int (self.barnHealth)), False, (0,0,204))
+        screen.blit (displayBarnHealth, (self.barnSlot[0] + 17, self.barnSlot[1] + 22))
+       
+        if self.damage == None:
+            return
+        
+        damage = myfont.render ( str (self.damage), False, (255,0,0))
         if self.typeDisplay == "bone":
-            screen.blit (damage, (6 * self.firstMargin + 60 - 15 + 48, self.height - 0.75 * self.endMargin - 15)) 
+            screen.blit (damage, (6 * self.firstMargin + 60 - 37, self.height - 0.75 * self.endMargin -40)) 
             
         elif self.typeDisplay == "horn":
-            screen.blit (damage, (24 * self.firstMargin + 60 -15 + 48, self.height - 0.75 * self.endMargin -17 - 15))
+            screen.blit (damage, (24 * self.firstMargin + 60 -37, self.height - 0.75 * self.endMargin - 40))
         elif self.typeDisplay == "milk" :
-            screen.blit (damage, (42 * self.firstMargin + 60 - 15 + 48, self.height - 0.75 * self.endMargin - 17 - 15))
+            screen.blit (damage, (42 * self.firstMargin + 60 - 41, self.height - 0.75 * self.endMargin - 43))
         elif self.typeDisplay == "water" :
-            screen.blit (damage, (6 * self.firstMargin + 60-15 + 48, self.height - 0.2 * self.endMargin-17-15))
+            screen.blit (damage, (6 * self.firstMargin + 60 - 41, self.height - 0.2 * self.endMargin-43))
         elif self.typeDisplay == "banana":
-            screen.blit (damage, (24 * self.firstMargin + 60-22 + 48, self.height - 0.2 * self.endMargin-17-15))
+            screen.blit (damage, (24 * self.firstMargin + 60-41, self.height - 0.2 * self.endMargin-43))
         
+        if self.pownage:
+            killedEnemy = myfont.render ("Annihilated", False, (0, 153,0))
+            screen.blit (killedEnemy, (self.width/2 - 90, self.height * (6/7)))
 
 # Helper function that displays animals and prices at the bottom of the screen
 
