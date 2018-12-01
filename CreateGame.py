@@ -49,6 +49,7 @@ class Game(PygameGame):
         self.lightBlue = (204, 255, 255)
         self.otherLightBlue = (173,216,230)
         self.lightPurple = (204, 204, 255)
+        self.purple = (102, 0, 204)
         self.peach = (255, 229, 153)
         self.lightPink = (255, 204, 204)
         self.lightYellow = (250, 250, 210)
@@ -557,6 +558,7 @@ class Game(PygameGame):
 
     def timerFired(self, dt):
     
+        print (self.level)
         self.fruitHealth -= (self.enemiesEatingFruit) * 0.0003
         self.grassHealth -= (self.enemiesEatingGrass) * 0.0003
         self.barnHealth -= (self.enemiesEatingBarn) * 0.0003
@@ -589,7 +591,7 @@ class Game(PygameGame):
         
         
         
-        if self.level == 0 or self.levelDisplay: #Doesn't increment various counters and create/move objects 
+        if self.level < 5 or self.levelDisplay: #Doesn't increment various counters and create/move objects 
             return
         self.deleteEnemies()
         self.deleteWeapons()
@@ -640,18 +642,18 @@ class Game(PygameGame):
             
         # Generates the first enemy of each level here
         if self.enemies == [] :
-            if self.level == 1:
+            if self.level == 5:
                 self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
-            elif self.level == 2:
+            elif self.level == 6:
                 self.enemies = pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
         
-            elif self.level == 3:
+            elif self.level == 7:
                 self.enemies = pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
@@ -679,18 +681,18 @@ class Game(PygameGame):
             
         if self.counter % 141 == 0 and not self.stopMoving: #Every 3 seconds generates an enemy
             y = random.randint (0, 7)
-            if self.level == 1:
+            if self.level == 5:
                 self.enemies.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))) 
-            elif self.level == 2:
+            elif self.level == 6:
                 self.enemies.add (pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
                         
-            elif self.level == 3:
+            elif self.level == 7:
                 self.enemies.add (pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
@@ -931,13 +933,80 @@ class Game(PygameGame):
 
 
 
+# Helper functions that displays tutorial screens
+
+    def createFirstScreen (self, screen) :
+        screen.fill (self.lightBlue)
+        myfont = pygame.font.SysFont ('Comic Sans MS', 30)
+        intro = myfont.render ("Monsters, Zombies, and Ghosts", False, (0,0,0))
+        screen.blit (intro, (self.width/2 - 200, self.height/2 - 100))
+        intro2 = myfont.render ("Have Taken Over the Planet!", False, (0,0,0))
+        screen.blit (intro2, (self.width/2 - 180, self.height/2 - 30))
+        
+        
+        myfont = pygame.font.SysFont ('Comic Sans MS', 22)
+        intro3 = myfont.render ("Press Spacebar to Continue", False, (self.purple))
+        screen.blit (intro3, (self.width/2 - 130, self.height/2 + 250))
+        
+        
+        
+    def createSecondScreen (self, screen) :
+        screen.fill (self.lightBlue) 
+        myfont = pygame.font.SysFont ('Comic Sans MS', 22)
+        intro = myfont.render ("Monsters Are the Weakest Enemies. They Consume Grass.", False, (0,0,0))
+        intro2 = myfont.render ("Zombies Are Slightly Stronger. They Consume Fruit.", False, (0,0,0))
+        intro3 = myfont.render ("Ghosts Are the Strongest Enemy. They Haunt the Barn.", False, (0,0,0))
+        intro4 = myfont.render ("Press Spacebar to Continue", False, (self.purple))
+        screen.blit (intro4, (self.width/2 - 130, self.height/2 + 250))
+        
+        screen.blit (intro, (self.width/2 - 300, self.height/2 - 250))
+        screen.blit (intro2, (self.width/2 - 260, self.height/2-50))
+        screen.blit (intro3, (self.width/2 - 285, self.height/2 + 150))
+        
+    
+    def createThirdScreen (self, screen) :
+        screen.fill (self.lightBlue) 
+        myfont = pygame.font.SysFont ('Comic Sans MS', 22)
+        intro = myfont.render ("Six Species of Animals Remain to Save the World", False, (0,0,0))
+        intro2 = myfont.render ("and Protect These Three Vital Sources!", False, (0,0,0))
+        intro3 = myfont.render ("Every Animal's Weapon Varies in Power and Speed", False, (0,0,0))
+        intro4 = myfont.render ("Press Spacebar to Continue", False, (self.purple))
+        screen.blit (intro4, (self.width/2 - 130, self.height/2 + 250))
+        
+        screen.blit (intro, (45, 100))
+        screen.blit (intro2, (100, 150))
+        screen.blit (intro3, (45, 280))
+    
+    
+    
+    def createFourthScreen (self, screen) :
+        screen.fill (self.lightBlue) 
+        myfont = pygame.font.SysFont ('Comic Sans MS', 22)
+        intro = myfont.render ("Every Time You Kill an Enemy, You Get Coins Based on", False, (0,0,0))
+        intro2 = myfont.render ("the Strength of the Enemy.", False, (0,0,0))
+        intro3 = myfont.render ('Use Coins to Buy Animals!', False, (0,0,0))
+        intro4 = myfont.render ('Ready?', False, (0,204,0))
+        intro6 = myfont.render ("Press Spacebar to Start", False, (self.purple))
+        screen.blit (intro6, (self.width/2 - 130, self.height/2 + 250))
+        
+        
+        
+        screen.blit (intro, (30, 100))
+        screen.blit (intro2, (170, 150))
+        screen.blit (intro3, (170, 300))
+        screen.blit (intro4, (260, 450))
+  
+
+ 
+        
+
 # Function that displays next level 
 
     def displayNextLevel (self, screen) :
         screen.fill (self.black) 
         # pygame.font.init() 
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
-        textsurface = myfont.render("Welcome to Level " + str (self.level) + "!", False, (255,255,255))
+        textsurface = myfont.render("Welcome to Level " + str (self.level-3) + "!", False, (255,255,255))
         screen.blit(textsurface,(self.width/2 - 135, self.height/2 - 100))
         
         textsurface2 = myfont.render ("Press Space Bar to Continue", False, (255, 255, 255))
@@ -948,6 +1017,8 @@ class Game(PygameGame):
 
     def keyPressed(self, keyCode, modifier):
         if keyCode == 32: #This is the value associated with the space bar
+            if self.level == 1 or self.level == 2 or self.level == 3 or self.level == 4:
+                self.level += 1
             if self.levelDisplay:
                 self.levelDisplay = False
                 self.weaponCounter -= 1
@@ -971,6 +1042,21 @@ class Game(PygameGame):
             
         if self.levelDisplay:
             self.displayNextLevel(screen)
+            return
+            
+            
+        if self.level == 1:
+            self.createFirstScreen (screen) 
+            return
+        elif self.level == 2:
+            self.createSecondScreen (screen)
+            return
+        elif self.level == 3:
+            self.createThirdScreen (screen)
+            return
+        
+        elif self.level == 4:
+            self.createFourthScreen (screen)
             return
         
         screen.fill(self.lightPurple)
@@ -1077,20 +1163,20 @@ class Game(PygameGame):
         
         damage = myfont.render ( str (self.damage), False, (255,0,0))
         if self.typeDisplay == "bone":
-            screen.blit (damage, (6 * self.firstMargin + 60 - 37, self.height - 0.75 * self.endMargin -40)) 
+            screen.blit (damage, (6 * self.firstMargin + 60 - 40, self.height - 0.75 * self.endMargin -40)) 
             
         elif self.typeDisplay == "horn":
-            screen.blit (damage, (24 * self.firstMargin + 60 -37, self.height - 0.75 * self.endMargin - 40))
+            screen.blit (damage, (24 * self.firstMargin + 60 -40, self.height - 0.75 * self.endMargin - 40))
         elif self.typeDisplay == "milk" :
-            screen.blit (damage, (42 * self.firstMargin + 60 - 41, self.height - 0.75 * self.endMargin - 43))
+            screen.blit (damage, (42 * self.firstMargin + 60 - 42, self.height - 0.75 * self.endMargin - 43))
         elif self.typeDisplay == "water" :
-            screen.blit (damage, (6 * self.firstMargin + 60 - 41, self.height - 0.2 * self.endMargin-43))
+            screen.blit (damage, (6 * self.firstMargin + 60 - 44, self.height - 0.2 * self.endMargin-46))
         elif self.typeDisplay == "banana":
-            screen.blit (damage, (24 * self.firstMargin + 60-41, self.height - 0.2 * self.endMargin-43))
+            screen.blit (damage, (24 * self.firstMargin + 60-47, self.height - 0.2 * self.endMargin-43))
         
         if self.pownage:
             killedEnemy = myfont.render ("Annihilated", False, (0, 153,0))
-            screen.blit (killedEnemy, (self.width/2 - 90, self.height * (6/7)))
+            screen.blit (killedEnemy, (self.width/2 - 90, self.height * (6/7) - 15))
 
 # Helper function that displays animals and prices at the bottom of the screen
 
