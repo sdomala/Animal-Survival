@@ -92,12 +92,18 @@ class Game(PygameGame):
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)) 
         self.highlighted = (-1, -1)
         self.firstStep = 0
-        self.enemiesEatingGrass = 0
-        self.enemiesEatingFruit = 0
-        self.enemiesEatingBarn = 0
-        self.grassHealth = 20
-        self.fruitHealth = 20
-        self.barnHealth = 20
+        self.enemiesEatingGrass = []
+        self.enemiesEatingFruit = []
+        self.enemiesEatingBarn = []
+        self.fruitLength = 0
+        self.grassLength = 0
+        self.barnLength = 0
+        self.grassHealth = 200
+        self.fruitHealth = 200
+        self.barnHealth = 200
+        self.firstGrass = False
+        self.firstBarn = False
+        self.firstFruit = False
         self.gameOver = False
         self.noBarn = False
         self.noGrass = False
@@ -557,11 +563,16 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
-    
-        print (self.level)
-        self.fruitHealth -= (self.enemiesEatingFruit) * 0.0003
-        self.grassHealth -= (self.enemiesEatingGrass) * 0.0003
-        self.barnHealth -= (self.enemiesEatingBarn) * 0.0003
+        counter = 0
+        for enemy in self.enemies:
+            if enemy.stopTheEnemy:
+                counter += 1
+        
+        
+        print (counter, self.grassLength, self.fruitLength, self.barnLength)
+        self.fruitHealth -= (self.fruitLength) * 0.02
+        self.grassHealth -= (self.grassLength) * 0.02
+        self.barnHealth -= (self.barnLength) * 0.02
         if self.grassHealth <= 0:
             self.grass = []
             self.grassSlot = (-200, -200)
@@ -819,8 +830,9 @@ class Game(PygameGame):
 # of the enemies
 
     def updateCollisions (self) :
-        for enemy in self.enemies:
-            for weapon in self.weapons:
+
+        for weapon in self.weapons:
+            for enemy in self.enemies:
                 if pygame.sprite.collide_mask (weapon, enemy) :
                     enemy.health -= weapon.damage
                     self.damage = weapon.damage
@@ -844,12 +856,17 @@ class Game(PygameGame):
                         self.pownage = True
                         self.enemies.remove (enemy)
                         if enemy.stopTheEnemy:
+                            print (enemy.x, enemy.y, enemy.direction)
                             if isinstance (enemy, Monster) :
-                                self.enemiesEatingGrass -= 1
+                                self.enemiesEatingGrass.remove (enemy)
+                                self.grassLength -= 1
                             elif isinstance (enemy, Zombie) :
-                                self.enemiesEatingFruit -= 1
+                                self.enemiesEatingFruit.remove (enemy)
+                                self.fruitLength -= 1
+                                print (333333333333333333333333333)
                             elif isinstance (enemy, Ghost) :
-                                self.enemiesEatingBarn -= 1
+                                self.enemiesEatingBarn.remove (enemy)
+                                self.barnLength -= 1
                         if isinstance (enemy, Monster) :
                             self.money += 1 #Added to amount of money for every monster killed
                 
@@ -858,47 +875,65 @@ class Game(PygameGame):
                       
                         elif isinstance (enemy, Ghost) :
                             self.money += 10
-                   
-            # if self.hasAnimal:
-            #     for animal in self.animals:
-            #         if isinstance (animal, Lion) :
-            #             if pygame.sprite.collide_mask (enemy, animal) :
-            #                 enemy.health -= animal.damage 
-            #                 if enemy.health <= 0:
-            #                     self.enemies.remove (enemy)
-            #                     if enemy.stopTheEnemy:
-            #                         if isinstance (enemy, Monster) :
-            #                             self.enemiesEatingGrass -= 1
-            #                         elif isinstance (enemy, Zombie) :
-            #                             self.enemiesEatingFruit -= 1
-            #                         elif isinstance (enemy, Ghost) :
-            #                             self.enemiesEatingBarn -= 1
-            #                     if isinstance (enemy, Monster) :
-            #                         self.money += 1 #Added to amount of money for every monster killed
-            #                     elif isinstance (enemy, Zombie) :
-            #                         self.money += 5
-            #                     elif isinstance (enemy, Ghost) :
-            #                         self.money += 10
-            # 
             
-                            
+            
+            
+        for enemy in self.enemies:
             for grass in self.grass:
                 if isinstance (enemy, Monster) :
                     if pygame.sprite.collide_mask (enemy, grass) :
+                        print ("collision")
                         enemy.stopTheEnemy = True
-                        self.enemiesEatingGrass += 1
+                        if self.enemiesEatingGrass == [] :
+                            self.enemiesEatingGrass = pygame.sprite.Group(enemy) 
+                            self.firstGrass = True
+                            self.grassLength += 1
+                            self.tempTempGrass = [enemy]
+                        elif self.firstGrass and not (enemy in self.tempTempGrass) : #and not (self.enemiesEatingGrass == pygame.sprite.Group(enemy)):
+                            self.enemiesEatingGrass.add (enemy)
+                            self.grassLength += 1
+                            self.firstGrass = False
+                        elif not self.firstGrass and enemy not in self.enemiesEatingGrass:
+                            self.enemiesEatingGrass.add (enemy)
+                            self.grassLength +=1
+                            
+                        
+                        
                 
             for fruit in self.fruit:
                 if isinstance (enemy, Zombie) :
                     if pygame.sprite.collide_mask (enemy, fruit) :
+                        
                         enemy.stopTheEnemy = True
-                        self.enemiesEatingFruit += 1
+                        if self.enemiesEatingFruit == [] :
+                            self.enemiesEatingFruit = pygame.sprite.Group(enemy) 
+                            self.firstFruit = True
+                            self.fruitLength += 1
+                            self.tempTempFruit = [enemy]
+                        elif self.firstFruit and not (enemy in self.tempTempFruit) : #and not (self.enemiesEatingGrass == pygame.sprite.Group(enemy)):
+                            self.enemiesEatingFruit.add (enemy)
+                            self.fruitLength += 1
+                            self.firstFruit = False
+                        elif not self.firstFruit and enemy not in self.enemiesEatingFruit:
+                            self.enemiesEatingFruit.add (enemy)
+                            self.fruitLength +=1
             
             for barn in self.barn:
                 if isinstance (enemy, Ghost) :
                     if pygame.sprite.collide_mask (enemy, barn) :
                         enemy.stopTheEnemy = True
-                        self.enemiesEatingBarn += 1
+                        if self.enemiesEatingBarn == [] :
+                            self.enemiesEatingBarn = pygame.sprite.Group(enemy) 
+                            self.firstBarn = True
+                            self.barnLength += 1
+                            self.tempTempBarn = [enemy]
+                        elif self.firstBarn and not (enemy in self.tempTempBarn) : #and not (self.enemiesEatingGrass == pygame.sprite.Group(enemy)):
+                            self.enemiesEatingBarn.add (enemy)
+                            self.barnLength += 1
+                            self.firstBarn = False
+                        elif not self.firstBarn  and enemy not in self.enemiesEatingBarn:
+                            self.enemiesEatingBarn.add (enemy)
+                            self.barnLength +=1
 
     
 # Helper function that displays introduction screen
@@ -1149,13 +1184,13 @@ class Game(PygameGame):
     
         myfont = pygame.font.SysFont ("Comic Sans MS", 30) 
         myfont.set_bold (True)
-        displayGrassHealth = myfont.render (str (int(self.grassHealth)), False, (0,0,204))
+        displayGrassHealth = myfont.render (str (math.ceil(self.grassHealth)), False, (0,0,204))
         screen.blit (displayGrassHealth, (self.grassSlot[0] + 17, self.grassSlot[1]))
         
-        displayFruitHealth = myfont.render (str (int (self.fruitHealth)), False, (0,0,204))
+        displayFruitHealth = myfont.render (str (math.ceil (self.fruitHealth)), False, (0,0,204))
         screen.blit (displayFruitHealth, (self.fruitSlot[0] + 17, self.fruitSlot[1]))
         
-        displayBarnHealth = myfont.render (str (int (self.barnHealth)), False, (0,0,204))
+        displayBarnHealth = myfont.render (str (math.ceil (self.barnHealth)), False, (0,0,204))
         screen.blit (displayBarnHealth, (self.barnSlot[0] + 17, self.barnSlot[1] + 22))
        
         if self.damage == None:
