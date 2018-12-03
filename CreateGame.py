@@ -74,15 +74,14 @@ class Game(PygameGame):
         self.money = 10
         self.chooseAnimal = True
         self.type = "dog"
-        
+        self.level = 0
         self.makeVariousGrids() 
         self.dogPrice = 5
-        self.goatPrice = 1#10
-        self.cowPrice = 1#20
-        self.alligatorPrice =1#70
-        self.gorillaPrice = 1#150
+        self.goatPrice = 10
+        self.cowPrice = 20
+        self.alligatorPrice =70
+        self.gorillaPrice = 150
         self.lionPrice = 200
-        self.level = 0
         self.stopMoving = False
         self.weaponCounter = 0
         self.levelDisplay = False
@@ -293,6 +292,9 @@ class Game(PygameGame):
         self.plantBlocks.append (firstBox)
         self.createDifferentGrids () #Helper functions
         self.createDifferentTracks(self.firstMargin, self.firstMargin)
+        if self.level == 5 or self.level == 6 or self.level == 7:
+            while len (self.plantBlocks) < 17 :
+                self.createDifferentTracks (self.firstMargin, self.firstMargin)
         if [] in self.boxes:
             self.boxes.remove ([])
         if [] in self.plantBlocks: 
@@ -311,7 +313,7 @@ class Game(PygameGame):
         self.grass = pygame.sprite.Group (Grass (self.grassSlot[0] + 35, self.grassSlot[1] + 20))
         self.fruit = pygame.sprite.Group (Fruit (self.fruitSlot[0] + 35, self.fruitSlot[1] + 20))
         self.barn = pygame.sprite.Group (Barn (self.barnSlot[0] + 35, self.barnSlot[1] + 20))
-
+        
 
 # Helper function that creates overall grid
 
@@ -569,7 +571,7 @@ class Game(PygameGame):
                 counter += 1
         
         
-        print (counter, self.grassLength, self.fruitLength, self.barnLength)
+
         self.fruitHealth -= (self.fruitLength) * 0.02
         self.grassHealth -= (self.grassLength) * 0.02
         self.barnHealth -= (self.barnLength) * 0.02
@@ -603,6 +605,8 @@ class Game(PygameGame):
         
         
         if self.level < 5 or self.levelDisplay: #Doesn't increment various counters and create/move objects 
+            for weapon in self.weapons:
+                self.weapons.remove (weapon)
             return
         self.deleteEnemies()
         self.deleteWeapons()
@@ -851,19 +855,20 @@ class Game(PygameGame):
                     
                     
                     
+                    
                     self.weapons.remove (weapon)
                     if enemy.health <= 0:
                         self.pownage = True
                         self.enemies.remove (enemy)
                         if enemy.stopTheEnemy:
-                            print (enemy.x, enemy.y, enemy.direction)
+                            
                             if isinstance (enemy, Monster) :
                                 self.enemiesEatingGrass.remove (enemy)
                                 self.grassLength -= 1
                             elif isinstance (enemy, Zombie) :
                                 self.enemiesEatingFruit.remove (enemy)
                                 self.fruitLength -= 1
-                                print (333333333333333333333333333)
+                              
                             elif isinstance (enemy, Ghost) :
                                 self.enemiesEatingBarn.remove (enemy)
                                 self.barnLength -= 1
@@ -882,7 +887,7 @@ class Game(PygameGame):
             for grass in self.grass:
                 if isinstance (enemy, Monster) :
                     if pygame.sprite.collide_mask (enemy, grass) :
-                        print ("collision")
+                       
                         enemy.stopTheEnemy = True
                         if self.enemiesEatingGrass == [] :
                             self.enemiesEatingGrass = pygame.sprite.Group(enemy) 
@@ -1185,7 +1190,7 @@ class Game(PygameGame):
         myfont = pygame.font.SysFont ("Comic Sans MS", 30) 
         myfont.set_bold (True)
         displayGrassHealth = myfont.render (str (math.ceil(self.grassHealth)), False, (0,0,204))
-        screen.blit (displayGrassHealth, (self.grassSlot[0] + 17, self.grassSlot[1]))
+        screen.blit (displayGrassHealth, (self.grassSlot[0] + 12, self.grassSlot[1]))
         
         displayFruitHealth = myfont.render (str (math.ceil (self.fruitHealth)), False, (0,0,204))
         screen.blit (displayFruitHealth, (self.fruitSlot[0] + 17, self.fruitSlot[1]))
