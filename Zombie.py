@@ -18,4 +18,4 @@ class Zombie (Enemy) :
         self.image = pygame.image.load ('GreenZombie4.png').convert_alpha()        
         self.width = self.image.get_width()
         self.height = self.image.get_height()
-        self.health = 75
+        self.health = 60
