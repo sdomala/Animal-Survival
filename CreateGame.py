@@ -86,10 +86,11 @@ class Game(PygameGame):
         self.stopMoving = False
         self.weaponCounter = 0
         self.levelDisplay = False
+        self.enemySpeed = 1
         self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0] +  \
                         self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)) 
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed)) 
         self.highlighted = (-1, -1)
         self.firstStep = 0
         self.enemiesEatingGrass = []
@@ -114,6 +115,7 @@ class Game(PygameGame):
         self.lionDamage = 0
         self.lionCollision = False
         self.timeIndex = 141
+        
         
         
         
@@ -464,7 +466,6 @@ class Game(PygameGame):
         if self.level == 0:
             if (x >= self.width/2 - 75) and x <= (self.width/2 + 75) and y >= (self.height/2 + 100) and y <= (self.height/2 + 200):
                 self.level += 1
-                self.timeIndex -= 20
                 return
         if self.chooseAnimal:
             self.getType (x, y)
@@ -682,35 +683,35 @@ class Game(PygameGame):
                 self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
             elif self.level == 6:
                 self.enemies = pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
         
             elif self.level == 7:
                 self.enemies = pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
             else :
                 whichEnemy = random.randint (1,3)
                 if whichEnemy == 1:
                     self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
                 elif whichEnemy == 2:
                     self.enemies = pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
                 else:
                     self.enemies = pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
             self.counter += 1
                     
         
@@ -721,18 +722,18 @@ class Game(PygameGame):
                     self.enemies.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))) 
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))) 
                 elif self.level == 6:
                     self.enemies.add (pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed)))
                         
                 elif self.level == 7:
                     self.enemies.add (pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed)))
             
         else :
             if self.counter % self.timeIndex == 0 and not self.stopMoving:
@@ -741,17 +742,19 @@ class Game(PygameGame):
                         self.enemies.add(pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed)))
                     elif whichEnemy == 2:
                         self.enemies.add(pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed)))
                     else:
                         self.enemies.add(pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
-                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot,self.direction)))
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot,self.direction, self.enemySpeed)))
+                    print ("added enemy")
+                    
               
       
         self.enemies.update(self.width, self.height)
@@ -1117,12 +1120,15 @@ class Game(PygameGame):
 # Keypressed function to switch between levels
 
     def keyPressed(self, keyCode, modifier):
+       
         if keyCode == 32: #This is the value associated with the space bar
             if self.level == 1 or self.level == 2 or self.level == 3 or self.level == 4:
                 self.level += 1
             if self.levelDisplay:
                 self.levelDisplay = False
                 self.weaponCounter -= 1
+                self.timeIndex -= 15
+                self.enemySpeed += 0.2
             
             elif self.gameOver :
                 self.gameOver = False
