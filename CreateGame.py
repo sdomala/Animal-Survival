@@ -69,6 +69,7 @@ class Game(PygameGame):
         
         self.firstAnimal = True
         self.hasAnimal = False
+        self.animals = []
         self.weapons = []
         self.hasWeapon = False
         self.money = 10
@@ -110,6 +111,9 @@ class Game(PygameGame):
         self.damage = 0
         self.pownage = False
         self.typeDisplay = None
+        self.lionDamage = 0
+        
+        
         
       
 
@@ -292,9 +296,10 @@ class Game(PygameGame):
         self.plantBlocks.append (firstBox)
         self.createDifferentGrids () #Helper functions
         self.createDifferentTracks(self.firstMargin, self.firstMargin)
-        if self.level == 5 or self.level == 6 or self.level == 7:
-            while len (self.plantBlocks) < 17 :
-                self.createDifferentTracks (self.firstMargin, self.firstMargin)
+        if self.level < 8 :
+            index = random.randint (0,9)
+            self.plantBlocks = self.getFirstPlantBlocks()[index]
+        
         if [] in self.boxes:
             self.boxes.remove ([])
         if [] in self.plantBlocks: 
@@ -313,6 +318,7 @@ class Game(PygameGame):
         self.grass = pygame.sprite.Group (Grass (self.grassSlot[0] + 35, self.grassSlot[1] + 20))
         self.fruit = pygame.sprite.Group (Fruit (self.fruitSlot[0] + 35, self.fruitSlot[1] + 20))
         self.barn = pygame.sprite.Group (Barn (self.barnSlot[0] + 35, self.barnSlot[1] + 20))
+        
         
 
 # Helper function that creates overall grid
@@ -562,9 +568,14 @@ class Game(PygameGame):
                 
      
 
+    
+
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
+    
+        for weapon in self.weapons:
+            print (weapon.x, weapon.y)
         counter = 0
         for enemy in self.enemies:
             if enemy.stopTheEnemy:
@@ -605,10 +616,7 @@ class Game(PygameGame):
         
         
         if self.level < 5 or self.levelDisplay: #Doesn't increment various counters and create/move objects 
-            if self.hasWeapon:
-                for weapon in self.weapons:
-                    print (weapon)
-                    self.weapons.remove (weapon)
+            
             return
         self.deleteEnemies()
         self.deleteWeapons()
@@ -634,8 +642,15 @@ class Game(PygameGame):
             self.level += 1
             self.stopMoving = False #Increment level and allow movement again
             self.levelDisplay = True
+            if self.hasWeapon:
+                for weapon in self.weapons: # Here
+                    self.weapons.remove (weapon)
+                    self.hasWeapon = False
+                    
             self.makeVariousGrids()
+          
             if self.hasAnimal:
+               
                 for animal in self.animals:
                     self.animals.remove(animal)
                     if isinstance (animal, Dog) :
@@ -655,7 +670,8 @@ class Game(PygameGame):
                     
                     else:
                         self.money += self.lionPrice
-                        
+                    self.hasAnimal = False # Here
+                       
             
         # Generates the first enemy of each level here
         if self.enemies == [] :
@@ -760,6 +776,7 @@ class Game(PygameGame):
             if self.pownage == True:
                 self.pownage = False
             self.damage = None
+            self.lionDamage = 0
         
 # Helper function for creating later weapons
 
@@ -842,6 +859,7 @@ class Game(PygameGame):
                 if pygame.sprite.collide_mask (weapon, enemy) :
                     enemy.health -= weapon.damage
                     self.damage = weapon.damage
+                    print (enemy.x, enemy.y, self.animals, self.weapons)
                     
                     
                     if isinstance (weapon, Bone) :
@@ -888,7 +906,8 @@ class Game(PygameGame):
                     if isinstance (animal, Lion) :
                         for enemy in self.enemies:
                             if pygame.sprite.collide_mask (enemy, animal) :
-                                enemy.health -= animal.damage 
+                                enemy.health -= animal.damage
+                                self.lionDamage += animal.damage 
                                 if enemy.health <= 0:
                                     self.enemies.remove (enemy)
                                     if enemy.stopTheEnemy:
@@ -964,7 +983,12 @@ class Game(PygameGame):
                             self.enemiesEatingBarn.add (enemy)
                             self.barnLength +=1
 
-    
+    def getFirstPlantBlocks (self) :
+        return [[[(10, 10), (82, 65)], [(82, 10), (154, 65)], [(82, 65), (154, 120)], [(82, 120), (154, 175)], [(82, 175), (154, 230)], [(10, 175), (82, 230)], [(10, 230), (82, 285)], [(10, 285), (82,         340)], [(10, 340), (82, 395)], [(82, 340), (154, 395)], [(154, 340), (226, 395)], [(154, 395), (226, 450)], [(226, 395), (298, 450)], [(298, 395), (370, 450)], [(298, 340), (370, 395)], [(370, 340), (442, 395)], [(370, 285), (442, 340)], [(370, 230), (442, 285)], [(298, 230), (370, 285)], [(226, 230), (298, 285)], [(226, 175), (298, 230)], [(226, 120), (298, 175)], [(298, 120), (370, 175)], [(298, 65), (370, 120)], [(370, 65), (442, 120)], [(370, 10), (442, 65)], [(442, 10), (514, 65)], [(514, 10), (586, 65)]], [[(10, 10), (82, 65)], [(10, 65), (82, 120)], [(10, 120), (82, 175)], [(82, 120), (154, 175)], [(82, 175), (154, 230)], [(82, 230), (154, 285)], [(10, 230), (82, 285)], [(10, 285), (82, 340)], [(10, 340), (82, 395)], [(10, 395), (82, 450)], [(82, 395), (154, 450)], [(154, 395), (226, 450)], [(154, 340), (226, 395)], [(226, 340), (298, 395)], [(226, 285), (298, 340)], [(226, 230), (298, 285)], [(298, 230), (370, 285)], [(370, 230), (442, 285)], [(442, 230), (514, 285)], [(514, 230), (586, 285)]], [[(10, 10), (82, 65)], [(10, 65), (82, 120)], [(82, 65), (154, 120)], [(82, 120), (154, 175)], [(154, 120), (226, 175)], [(226, 120), (298, 175)], [(226, 65), (298, 120)], [(298, 65), (370, 120)], [(370, 65), (442, 120)], [(442, 65), (514, 120)], [(442, 120), (514, 175)], [(442, 175), (514, 230)], [(370, 175), (442, 230)], [(298, 175), (370, 230)], [(298, 230), (370, 285)], [(226, 230), (298, 285)], [(154, 230), (226, 285)], [(82, 230), (154, 285)], [(10, 230), (82, 285)], [(10, 285), (82, 340)], [(10, 340), (82, 395)], [(82, 340), (154, 395)], [(82, 395), (154, 450)], [(154, 395), (226, 450)], [(226, 395), (298, 450)], [(298, 395), (370, 450)], [(298, 340), (370, 395)], [(370, 340), (442, 395)], [(442, 340), (514, 395)], [(514, 340), (586, 395)]], [[(10, 10), (82, 65)], [(82, 10), (154, 65)], [(82, 65), (154, 120)], [(82, 120), (154, 175)], [(82, 175), (154, 230)], [(10, 175), (82, 230)], [(10, 230), (82, 285)], [(10, 285), (82, 340)], [(10, 340), (82, 395)], [(82, 340), (154, 395)], [(82, 395), (154, 450)], [(154, 395), (226, 450)], [(226, 395), (298, 450)], [(298, 395), (370, 450)], [(370, 395), (442, 450)], [(442, 395), (514, 450)], [(514, 395), (586, 450)]], [[(10, 10), (82, 65)], [(82, 10), (154, 65)], [(82, 65), (154, 120)], [(82, 120), (154, 175)], [(10, 120), (82, 175)], [(10, 175), (82, 230)], [(10, 230), (82, 285)], [(10, 285), (82, 340)], [(82, 285), (154, 340)], [(82, 340), (154, 395)], [(154, 340), (226, 395)], [(226, 340), (298, 395)], [(226, 395), (298, 450)], [(298, 395), (370, 450)], [(370, 395), (442, 450)], [(442, 395), (514, 450)], [(514, 395), (586, 450)]], [[(10, 10), (82, 65)], [(10, 65), (82, 120)], [(10, 120), (82, 175)], [(10, 175), (82, 230)], [(10, 230), (82, 285)], [(82, 230), (154, 285)], [(82, 285), (154, 340)], [(82, 340), (154, 395)], [(154, 340), (226, 395)], [(154, 395), (226, 450)], [(226, 395), (298, 450)], [(298, 395), (370, 450)], [(298, 340), (370, 395)], [(298, 285), (370, 340)], [(226, 285), (298, 340)], [(226, 230), (298, 285)], [(226, 175), (298, 230)], [(154, 175), (226, 230)], [(154, 120), (226, 175)], [(154, 65), (226, 120)], [(226, 65), (298, 120)], [(226, 10), (298, 65)], [(298, 10), (370, 65)], [(370, 10), (442, 65)], [(442, 10), (514, 65)], [(514, 10), (586, 65)]], [[(10, 10), (82, 65)], [(10, 65), (82, 120)], [(82, 65), (154, 120)], [(154, 65), (226, 120)], [(154, 120), (226, 175)], [(154, 175), (226, 230)], [(82, 175), (154, 230)], [(10, 175), (82, 230)], [(10, 230), (82, 285)], [(10, 285), (82, 340)], [(82, 285), (154, 340)], [(154, 285), (226, 340)], [(154, 340), (226, 395)], [(154, 395), (226, 450)], [(226, 395), (298, 450)], [(298, 395), (370, 450)], [(370, 395), (442, 450)], [(370, 340), (442, 395)], [(370, 285), (442, 340)], [(370, 230), (442, 285)], [(442, 230), (514, 285)], [(442, 175), (514, 230)], [(514, 175), (586, 230)]], [[(10, 10), (82, 65)], [(82, 10), (154, 65)], [(82, 65), (154, 120)], [(82, 120), (154, 175)], [(82, 175), (154, 230)], [(82, 230), (154, 285)], [(82, 285), (154, 340)], [(82, 340), (154, 395)], [(154, 340), (226, 395)], [(154, 395), (226, 450)], [(226, 395), (298, 450)], [(298, 395), (370, 450)], [(298, 340), (370, 395)], [(370, 340), (442, 395)], [(370, 285), (442, 340)], [(442, 285), (514, 340)], [(514, 285), (586, 340)]], [[(10, 10), (82, 65)], [(10, 65), (82, 120)], [(10, 120), (82, 175)], [(82, 120), (154, 175)], [(154, 120), (226, 175)], [(226, 120), (298, 175)], [(226, 175), (298, 230)], [(226, 230), (298, 285)], [(154, 230), (226, 285)], [(82, 230), (154, 285)], [(82, 285), (154, 340)], [(82, 340), (154, 395)], [(82, 395), (154, 450)], [(154, 395), (226, 450)], [(226, 395), (298, 450)], [(298, 395), (370, 450)], [(298, 340), (370, 395)], [(298, 285), (370, 340)], [(370, 285), (442, 340)], [(442, 285), (514, 340)], [(442, 230), (514, 285)], [(514, 230), (586, 285)]], [[(10, 10), (82, 65)], [(10, 65), (82, 120)], [(10, 120), (82, 175)], [(82, 120), (154, 175)], [(82, 175), (154, 230)], [(154, 175), (226, 230)], [(226, 175), (298, 230)], [(298, 175), (370, 230)], [(298, 230), (370, 285)], [(298, 285), (370, 340)], [(226, 285), (298, 340)], [(154, 285), (226, 340)], [(154, 340), (226, 395)], [(154, 395), (226, 450)], [(226, 395), (298, 450)], [(298, 395), (370, 450)], [(370, 395), (442, 450)], [(370, 340), (442, 395)], [(442, 340), (514, 395)], [(442, 285), (514, 340)], [(442, 230), (514, 285)], [(442, 175), (514, 230)], [(514, 175), (586, 230)]]]
+
+
+
+
 # Helper function that displays introduction screen
 
     def createInitialScreen (self, screen) :
@@ -1222,10 +1246,14 @@ class Game(PygameGame):
         displayBarnHealth = myfont.render (str (math.ceil (self.barnHealth)), False, (0,0,204))
         screen.blit (displayBarnHealth, (self.barnSlot[0] + 17, self.barnSlot[1] + 22))
        
-        if self.damage == None:
-            return
+       
+        if self.damage == None or self.damage == 0 :
+            if self.lionDamage == None or self.lionDamge == 0:
+                return
+        
         
         damage = myfont.render ( str (self.damage), False, (255,0,0))
+        lionDamage = myfont.render (str (self.lionDamage), False, (255,0,0))
         if self.typeDisplay == "bone":
             screen.blit (damage, (6 * self.firstMargin + 60 - 40, self.height - 0.75 * self.endMargin -40)) 
             
@@ -1237,6 +1265,10 @@ class Game(PygameGame):
             screen.blit (damage, (6 * self.firstMargin + 60 - 44, self.height - 0.2 * self.endMargin-46))
         elif self.typeDisplay == "banana":
             screen.blit (damage, (24 * self.firstMargin + 60-47, self.height - 0.2 * self.endMargin-43))
+        else:
+            screen.blit (lionDamage, (42 * self.firstMargin + 60 - 47, self.height - 0.2 * self.endMargin - 43))
+            print (self.lionDamage)
+        print (self.typeDisplay)
         
         if self.pownage:
             killedEnemy = myfont.render ("Annihilated", False, (0, 153,0))
