@@ -112,6 +112,8 @@ class Game(PygameGame):
         self.pownage = False
         self.typeDisplay = None
         self.lionDamage = 0
+        self.lionCollision = False
+        self.timeIndex = 141
         
         
         
@@ -462,6 +464,7 @@ class Game(PygameGame):
         if self.level == 0:
             if (x >= self.width/2 - 75) and x <= (self.width/2 + 75) and y >= (self.height/2 + 100) and y <= (self.height/2 + 200):
                 self.level += 1
+                self.timeIndex -= 20
                 return
         if self.chooseAnimal:
             self.getType (x, y)
@@ -574,8 +577,7 @@ class Game(PygameGame):
 
     def timerFired(self, dt):
     
-        for weapon in self.weapons:
-            print (weapon.x, weapon.y)
+        
         counter = 0
         for enemy in self.enemies:
             if enemy.stopTheEnemy:
@@ -671,6 +673,7 @@ class Game(PygameGame):
                     else:
                         self.money += self.lionPrice
                     self.hasAnimal = False # Here
+                    self.lionDamage = 0
                        
             
         # Generates the first enemy of each level here
@@ -711,40 +714,41 @@ class Game(PygameGame):
             self.counter += 1
                     
         
-            
-        if self.counter % 141 == 0 and not self.stopMoving: #Every 3 seconds generates an enemy
-            y = random.randint (0, 7)
-            if self.level == 5:
-                self.enemies.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
+        if self.level == 5 or self.level == 6 or self.level == 7:
+            if self.counter % 141 == 0 and not self.stopMoving: #Every 3 seconds generates an enemy
+                y = random.randint (0, 7)
+                if self.level == 5:
+                    self.enemies.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction))) 
-            elif self.level == 6:
-                self.enemies.add (pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
+                elif self.level == 6:
+                    self.enemies.add (pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
                         
-            elif self.level == 7:
-                self.enemies.add (pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
+                elif self.level == 7:
+                    self.enemies.add (pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
             
-            else :
-                whichEnemy = random.randint (1,3)
-                if whichEnemy == 1:
-                    self.enemies.add(pygame.sprite.Group(Monster(self.boxes[0][0][0]\
+        else :
+            if self.counter % self.timeIndex == 0 and not self.stopMoving:
+                    whichEnemy = random.randint (1,3)
+                    if whichEnemy == 1:
+                        self.enemies.add(pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
-                elif whichEnemy == 2:
-                    self.enemies.add(pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
+                    elif whichEnemy == 2:
+                        self.enemies.add(pygame.sprite.Group(Zombie(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction)))
-                else:
-                    self.enemies.add(pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
+                    else:
+                        self.enemies.add(pygame.sprite.Group(Ghost(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot,self.direction)))
@@ -776,7 +780,11 @@ class Game(PygameGame):
             if self.pownage == True:
                 self.pownage = False
             self.damage = None
-            self.lionDamage = 0
+        
+        if self.counter % 100 == 0 :
+            if not self.lionCollision:
+                self.lionDamage = 0
+            
         
 # Helper function for creating later weapons
 
@@ -859,7 +867,7 @@ class Game(PygameGame):
                 if pygame.sprite.collide_mask (weapon, enemy) :
                     enemy.health -= weapon.damage
                     self.damage = weapon.damage
-                    print (enemy.x, enemy.y, self.animals, self.weapons)
+                    
                     
                     
                     if isinstance (weapon, Bone) :
@@ -900,15 +908,18 @@ class Game(PygameGame):
                       
                         elif isinstance (enemy, Ghost) :
                             self.money += 10
-            
+        
+        self.lionCollision = False
         if self.hasAnimal:
             for animal in self.animals:
                     if isinstance (animal, Lion) :
                         for enemy in self.enemies:
                             if pygame.sprite.collide_mask (enemy, animal) :
+                                self.LionCollision = True
                                 enemy.health -= animal.damage
                                 self.lionDamage += animal.damage 
                                 if enemy.health <= 0:
+                                    self.pownage = True
                                     self.enemies.remove (enemy)
                                     if enemy.stopTheEnemy:
                                         if isinstance (enemy, Monster) :
@@ -923,6 +934,8 @@ class Game(PygameGame):
                                         self.money += 5
                                     elif isinstance (enemy, Ghost) :
                                         self.money += 10
+        if not self.lionCollision:
+            self.lionCollision = 0
         
             
             
@@ -1248,27 +1261,29 @@ class Game(PygameGame):
        
        
         if self.damage == None or self.damage == 0 :
-            if self.lionDamage == None or self.lionDamge == 0:
+            if self.lionDamage == None or self.lionDamage == 0:
                 return
         
+        if not self.damage == None and not self.damage == 0:
+            damage = myfont.render ( str (self.damage), False, (255,0,0))
         
-        damage = myfont.render ( str (self.damage), False, (255,0,0))
-        lionDamage = myfont.render (str (self.lionDamage), False, (255,0,0))
-        if self.typeDisplay == "bone":
-            screen.blit (damage, (6 * self.firstMargin + 60 - 40, self.height - 0.75 * self.endMargin -40)) 
+            if self.typeDisplay == "bone":
+                screen.blit (damage, (6 * self.firstMargin + 60 - 40, self.height - 0.75 * self.endMargin -40)) 
             
-        elif self.typeDisplay == "horn":
-            screen.blit (damage, (24 * self.firstMargin + 60 -40, self.height - 0.75 * self.endMargin - 40))
-        elif self.typeDisplay == "milk" :
-            screen.blit (damage, (42 * self.firstMargin + 60 - 42, self.height - 0.75 * self.endMargin - 43))
-        elif self.typeDisplay == "water" :
-            screen.blit (damage, (6 * self.firstMargin + 60 - 44, self.height - 0.2 * self.endMargin-46))
-        elif self.typeDisplay == "banana":
-            screen.blit (damage, (24 * self.firstMargin + 60-47, self.height - 0.2 * self.endMargin-43))
-        else:
-            screen.blit (lionDamage, (42 * self.firstMargin + 60 - 47, self.height - 0.2 * self.endMargin - 43))
-            print (self.lionDamage)
-        print (self.typeDisplay)
+            elif self.typeDisplay == "horn":
+                screen.blit (damage, (24 * self.firstMargin + 60 -40, self.height - 0.75 * self.endMargin - 40))
+            elif self.typeDisplay == "milk" :
+                screen.blit (damage, (42 * self.firstMargin + 60 - 42, self.height - 0.75 * self.endMargin - 43))
+            elif self.typeDisplay == "water" :
+                screen.blit (damage, (6 * self.firstMargin + 60 - 44, self.height - 0.2 * self.endMargin-46))
+            elif self.typeDisplay == "banana":
+                screen.blit (damage, (24 * self.firstMargin + 60-47, self.height - 0.2 * self.endMargin-43))
+            
+                
+            
+        else :
+            lionDamage = myfont.render (str (int(self.lionDamage)), False, (255,0,0))
+            screen.blit (lionDamage, (42 * self.firstMargin + 60 - 42, self.height - 0.2 * self.endMargin - 50))
         
         if self.pownage:
             killedEnemy = myfont.render ("Annihilated", False, (0, 153,0))
