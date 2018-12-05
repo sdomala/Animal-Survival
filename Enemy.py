@@ -16,10 +16,12 @@ import math
 class Enemy(pygame.sprite.Sprite):
 
 # Constructor method that initializes monster image, location, and speed
-    def __init__(self, x, y, rows, cols, margin, width, height, stepY, stepX, plantBlocks, grassSlot, direction):
+    def __init__(self, x, y, rows, cols, margin, width, height, stepY, stepX, plantBlocks, grassSlot, direction, speed):
         super(Enemy, self).__init__()
         self.x, self.y = x, y
-        self.xSpeed = 1
+        self.originalXSpeed = speed
+        self.xSpeed = self.originalXSpeed
+        self.ySpeed = 0
         self.ySpeed = 0
         self.image = pygame.image.load ('BrownMonster2.png').convert_alpha()        
         self.width = self.image.get_width()
@@ -99,15 +101,15 @@ class Enemy(pygame.sprite.Sprite):
         if abs (self.x - xMidPoint) < 3 and abs (self.y - yMidPoint) < 3: #We're at the middle of a point
             if secondBlock [1][1] > firstBlock [1][1] :
                 self.xSpeed = 0
-                self.ySpeed = 1
+                self.ySpeed = self.originalXSpeed
             elif secondBlock [1][1] < firstBlock [1][1] :
                 self.xSpeed = 0
-                self.ySpeed = -1
+                self.ySpeed = -self.originalXSpeed
             elif secondBlock [1][0] > firstBlock [1][0] :
-                self.xSpeed = 1
+                self.xSpeed = self.originalXSpeed
                 self.ySpeed = 0
             else:
-                self.xSpeed = -1
+                self.xSpeed = -self.originalXSpeed
                 self.ySpeed = 0
         self.getRect()
     
