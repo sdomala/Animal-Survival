@@ -31,6 +31,7 @@ from Grass import Grass
 from Fruit import Fruit
 from Barn import Barn
 from SmallCoin import SmallCoin
+from Earth import Earth
 from pygamegame import PygameGame
 import random
 import math
@@ -1050,14 +1051,17 @@ class Game(PygameGame):
         screen.fill (self.lightBlue)
         myfont = pygame.font.SysFont ('Comic Sans MS', 30)
         intro = myfont.render ("Monsters, Zombies, and Ghosts", False, (0,0,0))
-        screen.blit (intro, (self.width/2 - 200, self.height/2 - 100))
+        screen.blit (intro, (self.width/2 - 200, self.height/2 - 200))
         intro2 = myfont.render ("Have Taken Over the Planet!", False, (0,0,0))
-        screen.blit (intro2, (self.width/2 - 180, self.height/2 - 30))
+        screen.blit (intro2, (self.width/2 - 180, self.height/2 - 130))
         
         
         myfont = pygame.font.SysFont ('Comic Sans MS', 22)
         intro3 = myfont.render ("Press Spacebar to Continue", False, (self.purple))
         screen.blit (intro3, (self.width/2 - 130, self.height/2 + 250))
+        
+        earthImage = pygame.sprite.Group (Earth (300, 350))
+        earthImage.draw (screen)
         
         
         
@@ -1068,11 +1072,36 @@ class Game(PygameGame):
         intro2 = myfont.render ("Zombies Are Slightly Stronger. They Consume Fruit.", False, (0,0,0))
         intro3 = myfont.render ("Ghosts Are the Strongest Enemy. They Haunt the Barn.", False, (0,0,0))
         intro4 = myfont.render ("Press Spacebar to Continue", False, (self.purple))
-        screen.blit (intro4, (self.width/2 - 130, self.height/2 + 250))
+        
+        
+        
+        
+        screen.blit (intro4, (self.width/2 - 130, self.height/2 + 270))
         
         screen.blit (intro, (self.width/2 - 300, self.height/2 - 250))
         screen.blit (intro2, (self.width/2 - 260, self.height/2-50))
         screen.blit (intro3, (self.width/2 - 285, self.height/2 + 150))
+        
+        self.displayEnemies = pygame.sprite.Group(Monster(200, 125,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
+                        
+        self.displayEnemies.add (Zombie(200, 325,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
+        
+        self.displayEnemies.add (Ghost(200, 525,
+                        self.numRows, self.numCols, self.firstMargin, self.width, 
+                        self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
+                        
+        self.displayEnemies.add ((Grass (400, 125)))
+        self.displayEnemies.add ((Barn (400, 525)))
+        self.displayEnemies.add ((Fruit (400, 325)))
+                        
+                        
+        
+        self.displayEnemies.draw (screen)
+        
         
     
     def createThirdScreen (self, screen) :
@@ -1086,9 +1115,60 @@ class Game(PygameGame):
         
         screen.blit (intro, (45, 100))
         screen.blit (intro2, (100, 150))
-        screen.blit (intro3, (45, 280))
+        screen.blit (intro3, (45, 230))
+        
+        
+        
+        intro5 = myfont.render ("Damage: 1/10", False, (255,0,0))
+        intro6 = myfont.render ("Speed: 5/10", False, (0,0,102))
+        
+        intro7 = myfont.render ("Damage: 3/10", False, (255,0,0))
+        intro8 = myfont.render ("Speed: 5/10", False, (0,0,102))
+        
+        intro9 = myfont.render ("Damage: 5/10", False, (255,0,0))
+        intro10 = myfont.render ("Speed: 4/10", False, (0,0,102))
+        
+        intro11 = myfont.render ("Damage: 7/10", False, (255,0,0))
+        intro12 = myfont.render ("Speed: 7/10", False, (0,0,102))
+        
+        intro13 = myfont.render ("Damage: 9/10", False, (255,0,0))
+        intro14 = myfont.render ("Speed: 7/10", False, (0,0,102))
+        
+        intro15 = myfont.render ("Damage: 10/10", False, (255,0,0))
+        intro16 = myfont.render ("Speed: 10/10", False, (0,0,102))
+        
+        self.tutorialAnimals = pygame.sprite.Group(Dog(6 * self.firstMargin + 15, self.height - 0.75 * self.endMargin - 100))
+        self.tutorialAnimals.add ((Bone (6 * self.firstMargin + 60 + 15, self.height - 0.75 * self.endMargin - 100, 0, 0)))
+        screen.blit (intro5, (6 * self.firstMargin -35, self.height - 0.75 * self.endMargin - 100 - 90))
+        screen.blit (intro6, (6 * self.firstMargin-35, self.height - 0.75 * self.endMargin - 100 - 60))
+        
+        self.tutorialAnimals.add ((Goat (24 * self.firstMargin + 15, self.height - 0.75 * self.endMargin - 100)))
+        self.tutorialAnimals.add ((Horn (24 * self.firstMargin + 60 + 15, self.height - 0.75 * self.endMargin - 100, 0, 0)))
+        screen.blit (intro7, (24 * self.firstMargin-35, self.height - 0.75 * self.endMargin - 100 - 90))
+        screen.blit (intro8, (24 * self.firstMargin-35, self.height - 0.75 * self.endMargin - 100 - 60))
+        
+        
+        self.tutorialAnimals.add ((Cow (42 * self.firstMargin + 15, self.height - 0.75 * self.endMargin - 100)))
+        self.tutorialAnimals.add ((Milk (42 * self.firstMargin + 60 + 15, self.height - 0.75 * self.endMargin - 100, 0, 0)))
+        screen.blit (intro9, (42 * self.firstMargin-35, self.height - 0.75 * self.endMargin - 100 - 90))
+        screen.blit (intro10, (42 * self.firstMargin-35  , self.height - 0.75 * self.endMargin - 100 - 60))
+        
+        
+        self.tutorialAnimals.add ((Alligator (6 * self.firstMargin + 15, self.height - 0.2 * self.endMargin - 50)))
+        self.tutorialAnimals.add ((Water (6 * self.firstMargin + 60 + 15, self.height - 0.2 * self.endMargin - 50, 0, 0)))
+        screen.blit (intro11, (6 * self.firstMargin-35, self.height - 0.2 * self.endMargin - 50 - 90))
+        screen.blit (intro12, (6 * self.firstMargin-35, self.height - 0.2 * self.endMargin - 50 - 60))
+        
+        self.tutorialAnimals.add ((Gorilla (24 * self.firstMargin + 15, self.height - 0.2 * self.endMargin - 50)))
+        self.tutorialAnimals.add ((Banana (24 * self.firstMargin + 60 + 15, self.height - 0.2 * self.endMargin - 50, 0, 0)))
+        screen.blit (intro13, (24 * self.firstMargin-35, self.height - 0.2 * self.endMargin - 50 - 90 ))
+        screen.blit (intro14, (24 * self.firstMargin-35, self.height - 0.2 * self.endMargin - 50 - 60 ))
+        
+        self.tutorialAnimals.add ((Lion (42 * self.firstMargin + 15, self.height - 0.2 * self.endMargin - 50)))
+        screen.blit (intro15, (42 * self.firstMargin-35, self.height - 0.2 * self.endMargin - 50 - 90))
+        screen.blit (intro16, (42 * self.firstMargin-35, self.height - 0.2 * self.endMargin - 50 - 60))
     
-    
+        self.tutorialAnimals.draw (screen)
     
     def createFourthScreen (self, screen) :
         screen.fill (self.lightBlue) 
