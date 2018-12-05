@@ -115,7 +115,9 @@ class Game(PygameGame):
         self.lionDamage = 0
         self.lionCollision = False
         self.timeIndex = 141
-        
+        self.hasEnemy = True
+        self.randomVariable = 0
+        self.tempCounter = 0
         
         
         
@@ -577,8 +579,8 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
-    
-        
+        print (self.counter)
+        self.tempCounter += 1
         counter = 0
         for enemy in self.enemies:
             if enemy.stopTheEnemy:
@@ -676,7 +678,9 @@ class Game(PygameGame):
                     self.hasAnimal = False # Here
                     self.lionDamage = 0
                        
-            
+        if self.levelDisplay:
+            self.hasEnemy = False
+            return
         # Generates the first enemy of each level here
         if self.enemies == [] :
             if self.level == 5:
@@ -713,6 +717,7 @@ class Game(PygameGame):
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
             self.counter += 1
+            self.hasEnemy = True
                     
         
         if self.level == 5 or self.level == 6 or self.level == 7:
@@ -753,7 +758,7 @@ class Game(PygameGame):
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot,self.direction, self.enemySpeed)))
-                    print ("added enemy")
+                    
                     
               
       
@@ -779,12 +784,13 @@ class Game(PygameGame):
             self.weapons.update ()
         self.updateCollisions() 
         
-        if self.counter % 47 == 0:
+        if self.tempCounter % 47 == 0:
             if self.pownage == True:
                 self.pownage = False
             self.damage = None
+            
         
-        if self.counter % 100 == 0 :
+        if self.tempCounter % 100 == 0 :
             if not self.lionCollision:
                 self.lionDamage = 0
             
@@ -870,7 +876,8 @@ class Game(PygameGame):
                 if pygame.sprite.collide_mask (weapon, enemy) :
                     enemy.health -= weapon.damage
                     self.damage = weapon.damage
-                    
+                    self.randomVariable += 1
+                 
                     
                     
                     if isinstance (weapon, Bone) :
@@ -1127,8 +1134,9 @@ class Game(PygameGame):
             if self.levelDisplay:
                 self.levelDisplay = False
                 self.weaponCounter -= 1
-                self.timeIndex -= 15
-                self.enemySpeed += 0.2
+                if self.levelDisplay > 7 :
+                    self.timeIndex -= 10
+                    self.enemySpeed += 0.1
             
             elif self.gameOver :
                 self.gameOver = False
@@ -1212,13 +1220,14 @@ class Game(PygameGame):
           
         self.createAnimalDisplay (screen)
         self.createCoin(screen)
-            
-        self.enemies.draw(screen)
+        if self.hasEnemy:    
+            self.enemies.draw(screen)
         
         
 # Helper function that creates coin in bottom right corner
 
     def createCoin (self, screen) :
+     
         self.coin = pygame.sprite.Group(Coin(self.width - 5 * self.firstMargin,\
                                             self.height - 0.5 * self.endMargin))
         self.coin.draw (screen)
@@ -1269,6 +1278,8 @@ class Game(PygameGame):
         if self.damage == None or self.damage == 0 :
             if self.lionDamage == None or self.lionDamage == 0:
                 return
+        
+      
         
         if not self.damage == None and not self.damage == 0:
             damage = myfont.render ( str (self.damage), False, (255,0,0))
