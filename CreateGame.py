@@ -81,7 +81,7 @@ class Game(PygameGame):
         self.cowPrice = 20
         self.alligatorPrice =70
         self.gorillaPrice = 150
-        self.lionPrice = 200
+        self.lionPrice = 2
         self.stopMoving = False
         self.weaponCounter = 0
         self.levelDisplay = False
@@ -605,8 +605,10 @@ class Game(PygameGame):
         
         
         if self.level < 5 or self.levelDisplay: #Doesn't increment various counters and create/move objects 
-            for weapon in self.weapons:
-                self.weapons.remove (weapon)
+            if self.hasWeapon:
+                for weapon in self.weapons:
+                    print (weapon)
+                    self.weapons.remove (weapon)
             return
         self.deleteEnemies()
         self.deleteWeapons()
@@ -881,6 +883,28 @@ class Game(PygameGame):
                         elif isinstance (enemy, Ghost) :
                             self.money += 10
             
+        if self.hasAnimal:
+            for animal in self.animals:
+                    if isinstance (animal, Lion) :
+                        for enemy in self.enemies:
+                            if pygame.sprite.collide_mask (enemy, animal) :
+                                enemy.health -= animal.damage 
+                                if enemy.health <= 0:
+                                    self.enemies.remove (enemy)
+                                    if enemy.stopTheEnemy:
+                                        if isinstance (enemy, Monster) :
+                                            self.grassLength -= 1
+                                        elif isinstance (enemy, Zombie) :
+                                            self.fruitLength -= 1
+                                        elif isinstance (enemy, Ghost) :
+                                            self.barnLength -= 1
+                                    if isinstance (enemy, Monster) :
+                                        self.money += 1 #Added to amount of money for every monster killed
+                                    elif isinstance (enemy, Zombie) :
+                                        self.money += 5
+                                    elif isinstance (enemy, Ghost) :
+                                        self.money += 10
+        
             
             
         for enemy in self.enemies:
