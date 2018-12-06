@@ -1182,13 +1182,49 @@ class Game(PygameGame):
         
         
         
-        screen.blit (intro, (30, 100))
-        screen.blit (intro2, (170, 150))
-        screen.blit (intro3, (170, 300))
+        screen.blit (intro, (30, 50))
+        screen.blit (intro2, (170, 100))
+        screen.blit (intro3, (170, 200))
         screen.blit (intro4, (260, 450))
   
 
- 
+        self.displayAnimals = pygame.sprite.Group(Dog(6 * self.firstMargin+ 30, self.height - 0.75 * self.endMargin - 200))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (6 * self.firstMargin + 60 + 30, self.height - 0.75 * self.endMargin- 200)))
+        
+        self.displayAnimals.add (pygame.sprite.Group (Goat (24 * self.firstMargin+ 30, self.height - 0.75 * self.endMargin- 200)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (24 * self.firstMargin + 60+ 30, self.height - 0.75 * self.endMargin- 200)))
+        
+        self.displayAnimals.add (pygame.sprite.Group (Cow (42 * self.firstMargin+ 30, self.height - 0.75 * self.endMargin- 200)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (42 * self.firstMargin + 60+ 30, self.height - 0.75 * self.endMargin- 200)))
+        
+        self.displayAnimals.add (pygame.sprite.Group (Alligator (6 * self.firstMargin+ 30, self.height - 0.2 * self.endMargin- 200)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (6 * self.firstMargin + 60+ 30, self.height - 0.2 * self.endMargin- 200)))
+        
+        self.displayAnimals.add (pygame.sprite.Group (Gorilla (24 * self.firstMargin+ 30, self.height - 0.2 * self.endMargin- 200)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (24 * self.firstMargin + 60+ 30, self.height - 0.2 * self.endMargin- 200)))
+        
+        self.displayAnimals.add (pygame.sprite.Group (Lion (42 * self.firstMargin+ 30, self.height - 0.2 * self.endMargin- 200)))
+        self.displayAnimals.add (pygame.sprite.Group (SmallCoin (42 * self.firstMargin + 60+ 30, self.height - 0.2 * self.endMargin- 200)))
+
+        self.displayAnimals.draw (screen)
+        
+        dog = myfont.render(str (self.dogPrice), False, (0, 0, 0))
+        screen.blit(dog,(6 * self.firstMargin + 60 - 8 + 30, self.height - 0.75 * self.endMargin - 17 - 200))
+        
+        goat = myfont.render (str (self.goatPrice), False, (0,0,0))
+        screen.blit (goat, (24 * self.firstMargin + 60 -15+ 30, self.height - 0.75 * self.endMargin -17- 200))
+        
+        cow = myfont.render (str (self.cowPrice), False, (0,0,0)) 
+        screen.blit (cow, (42 * self.firstMargin + 60 - 15+ 30, self.height - 0.75 * self.endMargin - 17- 200))
+        
+        alligator = myfont.render (str (self.alligatorPrice), False, (0,0,0))
+        screen.blit (alligator, (6 * self.firstMargin + 60-15+ 30, self.height - 0.2 * self.endMargin-17- 200))
+        
+        gorilla = myfont.render (str (self.gorillaPrice), False, (0,0,0))
+        screen.blit (gorilla, (24 * self.firstMargin + 60-22+ 30, self.height - 0.2 * self.endMargin-17- 200))
+        
+        lion = myfont.render (str (self.lionPrice), False, (0,0,0))
+        screen.blit (lion, (42 * self.firstMargin + 60-22+ 30, self.height - 0.2 * self.endMargin-17- 200))
         
 
 # Function that displays next level 
