@@ -119,6 +119,7 @@ class Game(PygameGame):
         self.hasEnemy = True
         self.randomVariable = 0
         self.tempCounter = 0
+        self.delay = 0
         
         
         
@@ -580,7 +581,8 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
-       
+        self.delay += 1
+        print (self.timeIndex)
         self.tempCounter += 1
         counter = 0
         for enemy in self.enemies:
@@ -683,7 +685,7 @@ class Game(PygameGame):
             self.hasEnemy = False
             return
         # Generates the first enemy of each level here
-        if self.enemies == [] :
+        if self.enemies == [] and self.delay > 200 :
             if self.level == 5:
                 self.enemies = pygame.sprite.Group(Monster(self.boxes[0][0][0]\
                         + self.stepX / 2, self.boxes[0][0][1] + self.stepY / 2,
@@ -718,11 +720,12 @@ class Game(PygameGame):
                         self.numRows, self.numCols, self.firstMargin, self.width, 
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
             self.counter += 1
+            
             self.hasEnemy = True
                     
         
         if self.level == 5 or self.level == 6 or self.level == 7:
-            if self.counter % 141 == 0 and not self.stopMoving: #Every 3 seconds generates an enemy
+            if self.counter % 141 == 0 and not self.stopMoving and self.delay > 200: #Every 3 seconds generates an enemy
                 y = random.randint (0, 7)
                 if self.level == 5:
                     self.enemies.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
@@ -742,7 +745,9 @@ class Game(PygameGame):
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed)))
             
         else :
-            if self.counter % self.timeIndex == 0 and not self.stopMoving:
+            if self.counter % self.timeIndex == 0 and not self.stopMoving and self.delay > 200:
+                    print ("execute")
+                    print ("yup")
                     whichEnemy = random.randint (1,3)
                     if whichEnemy == 1:
                         self.enemies.add(pygame.sprite.Group(Monster(self.boxes[0][0][0]\
@@ -762,8 +767,8 @@ class Game(PygameGame):
                     
                     
               
-      
-        self.enemies.update(self.width, self.height)
+        if self.hasEnemy:
+            self.enemies.update(self.width, self.height)
         
         if self.hasAnimal :
             for animal in self.animals:
@@ -1250,9 +1255,14 @@ class Game(PygameGame):
             if self.levelDisplay:
                 self.levelDisplay = False
                 self.weaponCounter -= 1
-                if self.levelDisplay > 7 :
-                    self.timeIndex -= 10
-                    self.enemySpeed += 0.1
+                self.delay = 0
+                self.counter = 0
+                
+                
+                if self.level > 7 :
+                    self.timeIndex -= 50 #Adjust progression of difficulty, 20
+                    self.enemySpeed += 0.2
+                  
             
             elif self.gameOver :
                 self.gameOver = False
