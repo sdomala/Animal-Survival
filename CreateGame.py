@@ -582,7 +582,7 @@ class Game(PygameGame):
 
     def timerFired(self, dt):
         self.delay += 1
-        print (self.timeIndex)
+        
         self.tempCounter += 1
         counter = 0
         for enemy in self.enemies:
@@ -721,11 +721,15 @@ class Game(PygameGame):
                         self.height, self.stepY, self.stepX, self.plantBlocks, self.grassSlot, self.direction, self.enemySpeed))
             self.counter += 1
             
+            difference = (self.counter % self.timeIndex) + 1
+            self.counter -= difference
+            
+            self.counter = 1
             self.hasEnemy = True
                     
         
         if self.level == 5 or self.level == 6 or self.level == 7:
-            if self.counter % 141 == 0 and not self.stopMoving and self.delay > 200: #Every 3 seconds generates an enemy
+            if self.counter % self.timeIndex == 0 and not self.stopMoving and self.delay > 200: #Every 3 seconds generates an enemy
                 y = random.randint (0, 7)
                 if self.level == 5:
                     self.enemies.add (pygame.sprite.Group(Monster(self.boxes[0][0][0]\
@@ -746,8 +750,7 @@ class Game(PygameGame):
             
         else :
             if self.counter % self.timeIndex == 0 and not self.stopMoving and self.delay > 200:
-                    print ("execute")
-                    print ("yup")
+                    
                     whichEnemy = random.randint (1,3)
                     if whichEnemy == 1:
                         self.enemies.add(pygame.sprite.Group(Monster(self.boxes[0][0][0]\
@@ -1257,11 +1260,16 @@ class Game(PygameGame):
                 self.weaponCounter -= 1
                 self.delay = 0
                 self.counter = 0
+                self.damage = 0
+                self.lionDamage = 0
+                self.pownage = False
                 
                 
                 if self.level > 7 :
-                    self.timeIndex -= 50 #Adjust progression of difficulty, 20
+                    self.timeIndex -= 20 #50, Adjust progression of difficulty, 20
                     self.enemySpeed += 0.2
+                    if self.timeIndex < 0 :
+                        self.timeIndex = 5
                   
             
             elif self.gameOver :
