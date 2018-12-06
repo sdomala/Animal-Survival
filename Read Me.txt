@@ -1,5 +1,0 @@
-Hi,
-
-My name is Saisiddarth Domala, and the following is my term project for 112. It is a tower defense game called "Animal Survival."
-
-The main file is called "CreateGame.py". That's where a majority of the logic/animation takes place. 
