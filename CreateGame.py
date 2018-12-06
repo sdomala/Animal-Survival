@@ -2,7 +2,7 @@
 # Name: Saisiddarth Domala
 # andrewID: sdomala
 # Section: O
-# Last modified 11/28/18
+# Last modified 12/5/18
 
 # Citation: Got this starter class from Pygame manual from 112 website
 # Created by Lukas Peraza
@@ -83,7 +83,7 @@ class Game(PygameGame):
         self.cowPrice = 20
         self.alligatorPrice =70
         self.gorillaPrice = 150
-        self.lionPrice = 2
+        self.lionPrice = 200
         self.stopMoving = False
         self.weaponCounter = 0
         self.levelDisplay = False
@@ -100,9 +100,9 @@ class Game(PygameGame):
         self.fruitLength = 0
         self.grassLength = 0
         self.barnLength = 0
-        self.grassHealth = 200
-        self.fruitHealth = 200
-        self.barnHealth = 200
+        self.grassHealth = 30
+        self.fruitHealth = 30
+        self.barnHealth = 30
         self.firstGrass = False
         self.firstBarn = False
         self.firstFruit = False
@@ -580,7 +580,7 @@ class Game(PygameGame):
 # Called approximately every 20 milliseconds and updates position of enemies
 
     def timerFired(self, dt):
-        print (self.counter)
+       
         self.tempCounter += 1
         counter = 0
         for enemy in self.enemies:
@@ -1233,7 +1233,7 @@ class Game(PygameGame):
         screen.fill (self.black) 
         # pygame.font.init() 
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
-        textsurface = myfont.render("Welcome to Level " + str (self.level-3) + "!", False, (255,255,255))
+        textsurface = myfont.render("Welcome to Level " + str (self.level-4) + "!", False, (255,255,255))
         screen.blit(textsurface,(self.width/2 - 135, self.height/2 - 100))
         
         textsurface2 = myfont.render ("Press Space Bar to Continue", False, (255, 255, 255))
@@ -1382,13 +1382,27 @@ class Game(PygameGame):
         myfont = pygame.font.SysFont ("Comic Sans MS", 30) 
         myfont.set_bold (True)
         displayGrassHealth = myfont.render (str (math.ceil(self.grassHealth)), False, (0,0,204))
-        screen.blit (displayGrassHealth, (self.grassSlot[0] + 12, self.grassSlot[1]))
+        if len (str (math.ceil (self.grassHealth))) > 1 :
+            screen.blit (displayGrassHealth, (self.grassSlot[0] + 12, self.grassSlot[1]))
+            
+        else :
+            screen.blit (displayGrassHealth, (self.grassSlot[0] + 22, self.grassSlot[1]))
         
         displayFruitHealth = myfont.render (str (math.ceil (self.fruitHealth)), False, (0,0,204))
-        screen.blit (displayFruitHealth, (self.fruitSlot[0] + 17, self.fruitSlot[1]))
+        
+        if len (str (math.ceil (self.fruitHealth))) > 1 :
+            screen.blit (displayFruitHealth, (self.fruitSlot[0] + 17, self.fruitSlot[1]))
+        
+        else :
+            screen.blit (displayFruitHealth, (self.fruitSlot[0] + 27, self.fruitSlot[1]))
         
         displayBarnHealth = myfont.render (str (math.ceil (self.barnHealth)), False, (0,0,204))
-        screen.blit (displayBarnHealth, (self.barnSlot[0] + 17, self.barnSlot[1] + 22))
+        
+        if len (str (math.ceil (self.barnHealth))) > 1 :
+            screen.blit (displayBarnHealth, (self.barnSlot[0] + 17, self.barnSlot[1] + 22))
+            
+        else :
+            screen.blit (displayBarnHealth, (self.barnSlot[0] + 27, self.barnSlot[1] + 22))
        
        
         if self.damage == None or self.damage == 0 :
@@ -1467,4 +1481,39 @@ class Game(PygameGame):
             0)
 
 Game(600, 600).run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
