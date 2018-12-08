@@ -271,11 +271,11 @@ class Game(PygameGame):
             if up:
                 self.direction = "up"
                 self.barnSlot = (xCoordinate, yCoordinate - self.stepY)
-                found = True
+                found = True 
             elif down:
                 self.direction = "down"
                 self.barnSlot = (xCoordinate, yCoordinate + self.stepY)
-                found = True
+                found = True 
         
             elif left:
                 self.direction = "left"
